@@ -83,6 +83,14 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     val jei = "15.20.0.105"
     library("jei-fabric", "mezz.jei", "jei-1.20.1-fabric").version(jei)
     library("jei-lexforge", "mezz.jei", "jei-1.20.1-forge").version(jei)
+
+    val enchantmentDescriptions = "17.1.19"
+    library("enchantment-descriptions-fabric", "maven.modrinth", "enchantment-descriptions").version("$enchantmentDescriptions-fabric")
+    library("enchantment-descriptions-lexforge", "maven.modrinth", "enchantment-descriptions").version("$enchantmentDescriptions-forge")
+
+    val bookshelf = "20.2.13"
+    library("bookshelf-fabric", "maven.modrinth", "bookshelf-lib").version("$bookshelf-fabric")
+    library("bookshelf-lexforge", "maven.modrinth", "bookshelf-lib").version("$bookshelf-forge")
 }
 
 plugins {
@@ -95,3 +103,4 @@ rootProject.name = name
 
 include(":xplat")
 include(":lexforge")
+include(":fabric")

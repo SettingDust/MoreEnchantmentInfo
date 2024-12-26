@@ -11,20 +11,17 @@ plugins {
 
 val id: String by rootProject.properties
 
-subprojects {
-    base { archivesName.set("${rootProject.base.archivesName.get()}-${project.name}") }
-}
-
 architectury {
-    common("forge", "fabric")
+    platformSetupLoomIde()
+    fabric()
 }
 
 dependencies {
     minecraft(catalog.minecraft)
     mappings(loom.officialMojangMappings())
 
-    implementation(catalog.mixinsquared.common)
-    annotationProcessor(catalog.mixinsquared.common)
+    implementation(project(":xplat", "namedElements")) { isTransitive = false }
+    include(project(":xplat", "transformProductionFabric")) { isTransitive = false }
 
     modImplementation(catalog.fabric.loader)
     modImplementation(catalog.fabric.api)
@@ -44,15 +41,6 @@ tasks {
     withType<KotlinCompile> {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
-
-    jar {
-        manifest {
-            attributes(
-                "MixinConfigs" to "$id.mixins.json",
-                "FMLModType" to "GAMELIBRARY"
-            )
         }
     }
 }

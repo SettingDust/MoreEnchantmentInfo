@@ -47,8 +47,8 @@ dependencies {
 
     implementation(catalog.mixinextras.lexforge)
 
-    implementation(project(":xplat", "transformProductionForge")) { isTransitive = false }
-    include(project(":xplat")) { isTransitive = false }
+    implementation(project(":xplat", "namedElements")) { isTransitive = false }
+    include(project(":xplat", "transformProductionForge")) { isTransitive = false }
 
     modImplementation(catalog.sinytra.connector)
     modImplementation(catalog.forgified.fabric.api) { exclude(module = "fabric-loader") }
