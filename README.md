@@ -10,3 +10,9 @@ Adding enchantment information to JEI
 - Enchantment properties such as tradeable, discoverable, category, rarity, etc.
 - Applicable items
 - Enchantment conflicts
+
+## Credit
+
+- https://modrinth.com/resourcepack/jowys-8x8-classic_style_items
+- https://modrinth.com/resourcepack/unfaithful-8x
+- https://modrinth.com/resourcepack/tiny-pixels
