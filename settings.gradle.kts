@@ -91,6 +91,10 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     val bookshelf = "20.2.13"
     library("bookshelf-fabric", "maven.modrinth", "bookshelf-lib").version("$bookshelf-fabric")
     library("bookshelf-lexforge", "maven.modrinth", "bookshelf-lib").version("$bookshelf-forge")
+
+    val emi = "1.1.18+1.20.1"
+    library("emi-fabric", "maven.modrinth", "emi").version("$emi+fabric")
+    library("emi-lexforge", "maven.modrinth", "emi").version("$emi+forge")
 }
 
 plugins {
