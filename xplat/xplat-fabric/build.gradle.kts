@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(catalog.plugins.kotlin.jvm)
     alias(catalog.plugins.kotlin.plugin.serialization)
@@ -12,16 +9,12 @@ plugins {
 val id: String by rootProject.properties
 
 architectury {
-    platformSetupLoomIde()
     fabric()
 }
 
 dependencies {
     minecraft(catalog.minecraft)
     mappings(loom.officialMojangMappings())
-
-    implementation(project(":xplat", "namedElements")) { isTransitive = false }
-    include(project(":xplat:xplat-fabric")) { isTransitive = false }
 
     modImplementation(catalog.fabric.loader)
     modImplementation(catalog.fabric.api)
@@ -37,20 +30,16 @@ dependencies {
     modImplementation(catalog.bookshelf.fabric)
 }
 
-tasks {
-    withType<KotlinCompile> {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
-
-    withType<ProcessResources> {
-        from(rootProject.sourceSets.main.get().resources)
+sourceSets {
+    main {
+        java.srcDir(project(":xplat").sourceSets.main.get().java)
+        kotlin.srcDir(project(":xplat").sourceSets.main.get().kotlin)
+        resources.srcDir(project(":xplat").sourceSets.main.get().resources)
     }
 }
 
 loom {
-//    accessWidenerPath = file("src/main/resources/$id.accesswidener")
+//    accessWidenerPath = project(":xplat").file("src/main/resources/$id.accesswidener")
 
     mixin {
         defaultRefmapName = "$id.refmap.json"

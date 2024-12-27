@@ -16,12 +16,6 @@
     "icon": "assets/${id}/icon.png",
     "environment": "*",
     "entrypoints": {
-        "client": [
-            {
-                "adapter": "kotlin",
-                "value": "settingdust.more_enchantment_info.MoreEnchantmentInfoClient::clientInit"
-            }
-        ],
         "jei_mod_plugin": [
             {
                 "adapter": "kotlin",
@@ -34,5 +28,7 @@
         "minecraft": "${minecraft}",
         "fabric-language-kotlin": "${fabric_kotlin}"
     },
-    "mixins": ["${id}.mixins.json"]
+    "mixins": [
+        "${id}.mixins.json"
+    ]
 }

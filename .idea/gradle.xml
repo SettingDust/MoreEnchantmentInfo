@@ -12,6 +12,8 @@
             <option value="$PROJECT_DIR$/fabric" />
             <option value="$PROJECT_DIR$/lexforge" />
             <option value="$PROJECT_DIR$/xplat" />
+            <option value="$PROJECT_DIR$/xplat/xplat-fabric" />
+            <option value="$PROJECT_DIR$/xplat/xplat-lexforge" />
           </set>
         </option>
       </GradleProjectSettings>

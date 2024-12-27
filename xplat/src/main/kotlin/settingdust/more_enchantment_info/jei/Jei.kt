@@ -1,11 +1,13 @@
 package settingdust.more_enchantment_info.jei
 
 import mezz.jei.api.IModPlugin
+import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import net.minecraft.core.registries.BuiltInRegistries
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 
+@JeiPlugin
 class JEIMoreEnchantmentInfo : IModPlugin {
     override fun getPluginUid() = MoreEnchantmentInfo.identifier("enchantment")
 

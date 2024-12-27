@@ -1,13 +1,13 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "settingdust.more_enchantment_info.mixin",
+    "package": "settingdust.more_enchantment_info.forge.mixin",
     "compatibilityLevel": "JAVA_17",
     "refmap": "more_enchantment_info.refmap.json",
     "mixins": [
+        "ForgePluginFinderMixin"
     ],
     "client": [
-        "MinecraftMixin"
     ],
     "injectors": {
         "defaultRequire": 1

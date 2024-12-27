@@ -8,6 +8,8 @@ plugins {
     alias(catalog.plugins.git.version)
 
     alias(catalog.plugins.explosion) apply false
+
+    alias(catalog.plugins.shadow)
 }
 
 val archive_name: String by rootProject.properties
@@ -90,13 +92,6 @@ allprojects {
 
         mavenLocal()
     }
-}
-
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
-
-    base { archivesName.set("${rootProject.base.archivesName.get()}${project.path.replace(":", "-")}") }
 
     tasks {
         withType<ProcessResources> {
@@ -128,5 +123,54 @@ subprojects {
                 expand(properties)
             }
         }
+    }
+}
+
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
+
+    base { archivesName.set("${rootProject.base.archivesName.get()}${project.path.replace(":", "-")}") }
+}
+
+dependencies {
+    shadow(project(":lexforge")) {
+        isTransitive = false
+    }
+    shadow(project(":fabric")) {
+        isTransitive = false
+    }
+}
+
+tasks {
+    jar {
+        enabled = false
+    }
+
+    shadowJar {
+        configurations = listOf(project.configurations.shadow.get())
+        mergeServiceFiles()
+        archiveClassifier.set("")
+
+        doFirst {
+            manifest {
+                from(
+                    configurations
+                        .flatMap { it.files }
+                        .map { zipTree(it) }
+                        .map { zip -> zip.find { it.name.equals("MANIFEST.MF") } }
+                )
+            }
+        }
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    named<Jar>("sourcesJar") {
+        from(project(":xplat").sourceSets.main.get().allSource)
+        from(project(":lexforge").sourceSets.main.get().allSource)
+        from(project(":fabric").sourceSets.main.get().allSource)
     }
 }

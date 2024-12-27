@@ -30,8 +30,6 @@ dependencies {
     modImplementation(catalog.fabric.api)
     modImplementation(catalog.fabric.kotlin)
 
-    implementation(catalog.mixin.constraints)
-
     modImplementation(catalog.yacl.fabric)
 
     modImplementation(catalog.jei.fabric)

@@ -78,7 +78,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     library("mixin-constraints", "com.moulberry", "mixinconstraints").version("1.0.1")
 
     library("yacl-fabric", "dev.isxander", "yet-another-config-lib").version("3.6.1+1.20.1-fabric")
-    library("yacl-forge", "dev.isxander", "yet-another-config-lib").version("3.6.1+1.20.1-forge")
+    library("yacl-lexforge", "dev.isxander", "yet-another-config-lib").version("3.6.1+1.20.1-forge")
 
     val jei = "15.20.0.105"
     library("jei-fabric", "mezz.jei", "jei-1.20.1-fabric").version(jei)
@@ -102,5 +102,8 @@ val name: String by settings
 rootProject.name = name
 
 include(":xplat")
+include(":xplat:xplat-lexforge")
+include(":xplat:xplat-fabric")
+
 include(":lexforge")
 include(":fabric")
