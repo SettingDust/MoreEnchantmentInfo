@@ -15,7 +15,7 @@ plugins {
 val archive_name: String by rootProject.properties
 val id: String by rootProject.properties
 
-group = "settingdust.lazyyyyy"
+group = "settingdust.more_enchantment_info"
 
 val gitVersion: Closure<String> by extra
 version = gitVersion()

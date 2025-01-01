@@ -50,8 +50,7 @@ tasks {
     jar {
         manifest {
             attributes(
-                "MixinConfigs" to "$id.mixins.json",
-                "FMLModType" to "GAMELIBRARY"
+                "MixinConfigs" to "$id.mixins.json"
             )
         }
     }
