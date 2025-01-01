@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-01-01
+### :bug: Bug Fixes
+- [`11e5485`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/11e5485894381856342740ae9b301152c51b1b38) - needn't fabric mixin to work *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.1.0] - 2024-12-27
 ### :sparkles: New Features
 - [`b5e765f`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/b5e765fa96eb395551487d6505eb5b4cd47c43cd) - usable on fabric *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -13,3 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [`193ecf7`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/193ecf784ff4fb3b3fc62e1f75533b4f7c739b9b) - add icon *(commit by [@SettingDust](https://github.com/SettingDust))*
 
 [0.1.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.0.0...0.1.0
+[0.1.1]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.1.0...0.1.1
