@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import settingdust.more_enchantment_info.MoreEnchantmentInfoClient;
 import settingdust.more_enchantment_info.jei.EnchantmentIngredientHelper;
 
-@Mixin(MoreEnchantmentInfoClient.class)
+@Mixin(value = MoreEnchantmentInfoClient.class, remap = false)
 public class MoreEnchantmentInfoClientMixin {
     /**
      * @author SettingDust
