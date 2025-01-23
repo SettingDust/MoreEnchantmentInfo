@@ -1,7 +1,5 @@
 package settingdust.more_enchantment_info.jei
 
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.CacheLoader
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.builder.ITooltipBuilder
 import mezz.jei.api.gui.drawable.IDrawable
@@ -9,6 +7,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder
 import mezz.jei.api.helpers.IGuiHelper
 import mezz.jei.api.recipe.IFocusGroup
+import mezz.jei.api.recipe.RecipeIngredientRole
 import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.ChatFormatting
@@ -16,7 +15,6 @@ import net.minecraft.client.resources.language.I18n
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.EnchantedBookItem
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.enchantment.Enchantment
@@ -34,12 +32,6 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
         private const val ENCHANTMENT = "ENCHANTMENT"
         private const val APPLICABLE = "APPLICABLE"
         private const val EXCLUSION = "EXCLUSION"
-
-        private val ENCHANTMENT_BOOK_CACHE =
-            CacheBuilder.newBuilder().build(object : CacheLoader<Enchantment, ItemStack>() {
-                override fun load(key: Enchantment) =
-                    EnchantedBookItem.createForEnchantment(EnchantmentInstance(key, 1))
-            })
 
         private const val BASE_HEIGHT = 42
     }
@@ -65,11 +57,28 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
         recipe: Enchantment,
         focuses: IFocusGroup
     ) {
+        for (i in (recipe.minLevel..recipe.maxLevel)) {
+            builder
+                .addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                .addItemStack(EnchantedBookItem.createForEnchantment(EnchantmentInstance(recipe, i)))
+        }
+
         builder
             .addInputSlot(1, 1)
             .setSlotName(ENCHANTMENT)
-            .addItemStack(ENCHANTMENT_BOOK_CACHE[recipe])
+            .addIngredient(EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT, recipe)
             .setStandardSlotBackground()
+
+        val applicable = Ingredient.of(
+            BuiltInRegistries.ITEM.asSequence()
+                .map { it.defaultInstance }
+                .filter { recipe.canEnchant(it) }
+                .asStream()
+        )
+
+        builder
+            .addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+            .addIngredients(applicable)
 
         builder
             .addOutputSlot(1, 21)
@@ -77,30 +86,26 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
             .addRichTooltipCallback { slot, tooltip ->
                 tooltip.add(Component.translatable("gui.more_enchantment_info.applicable"))
             }
-            .addIngredients(
-                Ingredient.of(
-                    BuiltInRegistries.ITEM.asSequence()
-                        .map { it.defaultInstance }
-                        .filter { recipe.canEnchant(it) }
-                        .asStream()
-                )
-            )
+            .addIngredients(applicable)
             .setStandardSlotBackground()
 
         val conflicts = BuiltInRegistries.ENCHANTMENT.asSequence()
             .filter { it != recipe && !it.isCompatibleWith(recipe) }
-            .map { ENCHANTMENT_BOOK_CACHE[it] }
             .toList()
         if (conflicts.isNotEmpty()) {
             height += 20
             builder
-                .addOutputSlot(1, 41)
+                .addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 41)
                 .setSlotName(EXCLUSION)
                 .addRichTooltipCallback { slot, tooltip ->
                     tooltip.add(Component.translatable("gui.more_enchantment_info.exclusion"))
                 }
-                .addIngredients(Ingredient.of(conflicts.stream()))
+                .addIngredients(EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT, conflicts)
                 .setStandardSlotBackground()
+//
+//            builder
+//                .addInvisibleIngredients(RecipeIngredientRole.RENDER_ONLY)
+//                .addItemStacks(conflicts.map { EnchantedBookItem.createForEnchantment(EnchantmentInstance(it, 1)) })
         }
     }
 

@@ -101,4 +101,8 @@ object MoreEnchantmentInfoClient {
                     )
                 })
     }
+
+    fun viewEnchantment(enchantment: Enchantment) {
+        throw UnsupportedOperationException("Mixin failed")
+    }
 }
