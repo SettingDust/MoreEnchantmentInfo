@@ -19,6 +19,6 @@ public class ForgePluginFinderMixin {
     private static void more_enchantment_info$appendPlugin(
         final CallbackInfoReturnable<List<IModPlugin>> cir
     ) {
-        cir.getReturnValue().add(new JEIMoreEnchantmentInfo(jeiHelpers));
+        cir.getReturnValue().add(new JEIMoreEnchantmentInfo());
     }
 }

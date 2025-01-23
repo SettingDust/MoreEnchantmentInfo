@@ -14,6 +14,6 @@ public class MoreEnchantmentInfoClientMixin {
      */
     @Overwrite
     public void viewEnchantment(Enchantment enchantment) {
-        EnchantmentIngredientHelper.INSTANCE.viewEnchantment$more_enchantment_info_xplat(enchantment);
+        EnchantmentIngredientHelper.INSTANCE.viewEnchantment(enchantment);
     }
 }

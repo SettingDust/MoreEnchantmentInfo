@@ -19,7 +19,7 @@ import java.util.stream.Stream
 object EnchantmentIngredientHelper : IIngredientHelper<Enchantment> {
     val ENCHANTMENT_INGREDIENT = IIngredientType<Enchantment> { Enchantment::class.java }
 
-    internal fun viewEnchantment(enchantments: Enchantment) {
+    fun viewEnchantment(enchantments: Enchantment) {
         val focus = JEIMoreEnchantmentInfo.INSTANCE.jeiHelpers.focusFactory.createFocus(
             RecipeIngredientRole.INPUT,
             ENCHANTMENT_INGREDIENT,
