@@ -35,8 +35,6 @@ dependencies {
 
     modImplementation(catalog.enchantment.descriptions.fabric)
     modImplementation(catalog.bookshelf.fabric)
-
-    modCompileOnly(catalog.emi.fabric)
 }
 
 tasks {

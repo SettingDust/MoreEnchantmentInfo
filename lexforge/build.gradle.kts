@@ -64,8 +64,6 @@ dependencies {
 
     modImplementation(catalog.enchantment.descriptions.lexforge)
     modImplementation(catalog.bookshelf.lexforge)
-
-    modImplementation(catalog.emi.lexforge)
 }
 
 tasks {

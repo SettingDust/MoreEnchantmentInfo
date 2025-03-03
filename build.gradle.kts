@@ -2,18 +2,20 @@ import groovy.lang.Closure
 
 plugins {
     java
-    alias(catalog.plugins.kotlin.jvm) apply false
-    alias(catalog.plugins.kotlin.plugin.serialization) apply false
 
-    alias(catalog.plugins.git.version)
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
 
-    alias(catalog.plugins.explosion) apply false
+    id("com.palantir.git-version") version "3.1.0"
 
-    alias(catalog.plugins.shadow)
+    id("com.gradleup.shadow") version "8.3.6"
+
+    id("earth.terrarium.cloche") version "0.8.6"
 }
 
 val archive_name: String by rootProject.properties
 val id: String by rootProject.properties
+val source: String by rootProject.properties
 
 group = "settingdust.more_enchantment_info"
 
@@ -24,153 +26,125 @@ base {
     archivesName = archive_name
 }
 
-allprojects {
-    apply(plugin = "java")
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven("https://api.modrinth.com/maven")
         }
-
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-
-        withSourcesJar()
-    }
-
-    repositories {
-        exclusiveContent {
-            forRepository {
-                maven("https://cursemaven.com")
-            }
-            filter {
-                includeGroup("curse.maven")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven("https://api.modrinth.com/maven")
-            }
-            filter {
-                includeGroup("maven.modrinth")
-            }
-        }
-
-        maven("https://maven.su5ed.dev/releases") {
-            content {
-                includeGroupAndSubgroups("dev.su5ed")
-                includeGroupAndSubgroups("org.sinytra")
-            }
-        }
-
-        maven("https://thedarkcolour.github.io/KotlinForForge/") {
-            content { includeGroup("thedarkcolour") }
-        }
-
-        maven("https://maven.terraformersmc.com/") {
-            content { includeGroupAndSubgroups("com.terraformersmc") }
-        }
-
-        maven("https://maven.bawnorton.com/releases") {
-            content {
-                includeGroup("com.github.bawnorton.mixinsquared")
-            }
-        }
-
-        maven("https://modmaven.dev") {
-            content {
-                includeGroup("mezz.jei")
-            }
-        }
-
-        maven("https://maven.isxander.dev/releases")
-
-        mavenCentral()
-
-        maven("https://maven.minecraftforge.net/")
-
-        mavenLocal()
-    }
-
-    tasks {
-        withType<ProcessResources> {
-            val properties = mapOf(
-                "id" to id,
-                "version" to rootProject.version,
-                "group" to rootProject.group,
-                "name" to rootProject.name,
-                "description" to rootProject.property("description").toString(),
-                "author" to rootProject.property("author").toString(),
-                "source" to rootProject.property("source").toString(),
-                "fabric_loader" to ">=0.15",
-                "minecraft" to ">=1.20.1",
-                "fabric_kotlin" to "*"
-            )
-
-            inputs.properties(properties)
-
-            filesMatching(
-                listOf(
-                    "pack.mcmeta",
-                    "fabric.mod.json",
-                    "META-INF/neoforge.mods.toml",
-                    "META-INF/mods.toml",
-                    "*.mixins.json",
-                    "META-INF/MANIFEST.MF"
-                )
-            ) {
-                expand(properties)
-            }
+        filter {
+            includeGroup("maven.modrinth")
         }
     }
+
+    exclusiveContent {
+        forRepository {
+            maven("https://maven.su5ed.dev/releases")
+        }
+        filter {
+            includeGroupAndSubgroups("dev.su5ed")
+            includeGroupAndSubgroups("org.sinytra")
+        }
+    }
+
+    maven("https://modmaven.dev") {
+        content {
+            includeGroup("mezz.jei")
+        }
+    }
+
+    maven("https://thedarkcolour.github.io/KotlinForForge/") {
+        content {
+            includeGroup("thedarkcolour")
+        }
+    }
+
+    mavenCentral()
+
+    maven("https://maven.fabricmc.net/")
+
+    maven("https://maven.minecraftforge.net/")
+
+    maven("https://maven.msrandom.net/repository/root")
+
+    mavenLocal()
 }
 
-subprojects {
-    group = rootProject.group
-    version = rootProject.version
-
-    base { archivesName.set("${rootProject.base.archivesName.get()}${project.path.replace(":", "-")}") }
-}
-
-dependencies {
-    shadow(project(":lexforge")) {
-        isTransitive = false
-    }
-    shadow(project(":fabric")) {
-        isTransitive = false
-    }
-}
-
-tasks {
-    jar {
-        enabled = false
-    }
-
-    shadowJar {
-        configurations = listOf(project.configurations.shadow.get())
-        mergeServiceFiles()
-        archiveClassifier.set("")
-
-        doFirst {
-            manifest {
-                from(
-                    configurations
-                        .flatMap { it.files }
-                        .map { zipTree(it) }
-                        .map { zip -> zip.find { it.name.equals("MANIFEST.MF") } }
-                )
+cloche {
+    metadata {
+        modId = id
+        name = rootProject.property("name").toString()
+        description = rootProject.property("description").toString()
+        license = "CC-BY-SA 4.0"
+        icon = "assets/$id/icon.png"
+        sources = source
+        issues = "$source/issues"
+        author("SettingDust")
+        dependency {
+            modId = "minecraft"
+            version {
+                start = "1.20.1"
             }
         }
     }
 
-    build {
-        dependsOn(shadowJar)
+    minecraftVersion = "1.20.1"
+
+    mappings {
+        official()
+        parchment("2023.09.03")
     }
 
-    named<Jar>("sourcesJar") {
-        from(project(":xplat").sourceSets.main.get().allSource)
-        from(project(":lexforge").sourceSets.main.get().allSource)
-        from(project(":fabric").sourceSets.main.get().allSource)
+    common {
+    }
+
+    fabric {
+        loaderVersion = "0.16.10"
+
+        includedClient()
+
+        metadata {
+            dependencies {
+                dependency {
+                    modId = "fabric-api"
+                }
+            }
+        }
+
+        runs {
+            client()
+        }
+
+        dependencies {
+            fabricApi("0.92.3+1.20.1")
+
+            modCompileOnlyApi("mezz.jei:jei-1.20.1-fabric-api:15.20.0.106")
+            modRuntimeOnly("mezz.jei:jei-1.20.1-fabric:15.20.0.106")
+
+            modImplementation("net.fabricmc:fabric-language-kotlin:1.13.1+kotlin.2.1.10") {
+                isTransitive = false
+            }
+        }
+    }
+
+    forge {
+        loaderVersion = "47.3.29"
+
+        metadata {
+            dependency {
+                modId = "fabric_api"
+            }
+        }
+
+        runs {
+            client()
+        }
+
+        dependencies {
+            implementation("thedarkcolour:kotlinforforge:4.10.0")
+
+            modImplementation("dev.su5ed.sinytra.fabric-api:fabric-api:0.92.2+1.11.11+1.20.1")
+
+            modImplementation("mezz.jei:jei-1.20.1-forge:15.20.0.106")
+        }
     }
 }
