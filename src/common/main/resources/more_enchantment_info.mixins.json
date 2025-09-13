@@ -4,12 +4,9 @@
     "package": "settingdust.more_enchantment_info.mixin",
     "compatibilityLevel": "JAVA_17",
     "refmap": "more_enchantment_info.refmap.json",
-    "plugin": "settingdust.more_enchantment_info.MoreEnchantmentMixinPlugin",
     "mixins": [
-        "jei.MoreEnchantmentInfoClientMixin"
     ],
     "client": [
-        "MinecraftMixin"
     ],
     "injectors": {
         "defaultRequire": 1

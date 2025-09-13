@@ -1,0 +1,9 @@
+{
+    "sources": [
+        {
+            "type": "directory",
+            "source": "more_enchantment_info/atlas/gui",
+            "prefix": ""
+        }
+    ]
+}

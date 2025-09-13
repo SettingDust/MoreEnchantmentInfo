@@ -11,21 +11,32 @@ import mezz.jei.api.recipe.RecipeIngredientRole
 import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.ChatFormatting
-import net.minecraft.client.resources.language.I18n
+import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.EnchantedBookItem
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.enchantment.Enchantment
-import net.minecraft.world.item.enchantment.EnchantmentInstance
 import org.joml.Vector4i
 import org.joml.Vector4ic
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
-import settingdust.more_enchantment_info.MoreEnchantmentInfoClient
-import kotlin.streams.asStream
+import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.description
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.holder
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCompatibleWith
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCurse
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isInTable
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isLootable
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isTradeable
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isTreasure
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.raritySprite
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.supportedCategories
 
-class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enchantment> {
+class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<Enchantment> {
     companion object {
         val TYPE = RecipeType.create(MoreEnchantmentInfo.MOD_ID, "enchantment", Enchantment::class.java)!!
 
@@ -33,7 +44,7 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
         private const val APPLICABLE = "APPLICABLE"
         private const val EXCLUSION = "EXCLUSION"
 
-        private const val BASE_HEIGHT = 42
+        private const val BASE_HEIGHT = 40
     }
 
     private var height = BASE_HEIGHT
@@ -50,30 +61,32 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
 
     override fun getHeight() = height
 
-    override fun getRegistryName(recipe: Enchantment) = BuiltInRegistries.ENCHANTMENT.getKey(recipe)
+    override fun getRegistryName(recipe: Enchantment) =
+        Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getKey(recipe)
 
     override fun setRecipe(
         builder: IRecipeLayoutBuilder,
         recipe: Enchantment,
         focuses: IFocusGroup
     ) {
-        for (i in (recipe.minLevel..recipe.maxLevel)) {
-            builder
-                .addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                .addItemStack(EnchantedBookItem.createForEnchantment(EnchantmentInstance(recipe, i)))
-        }
+        builder
+            .addInvisibleIngredients(RecipeIngredientRole.INPUT)
+            .addIngredient(EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT, recipe)
 
         builder
             .addInputSlot(1, 1)
             .setSlotName(ENCHANTMENT)
-            .addIngredient(EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT, recipe)
+            .addItemStacks(buildList {
+                for (i in (recipe.minLevel..recipe.maxLevel)) {
+                    add(EnchantedBookItem.createForEnchantment(EnchantmentInstance(recipe.holder!!, i)))
+                }
+            })
             .setStandardSlotBackground()
 
         val applicable = Ingredient.of(
-            BuiltInRegistries.ITEM.asSequence()
+            BuiltInRegistries.ITEM.stream()
                 .map { it.defaultInstance }
                 .filter { recipe.canEnchant(it) }
-                .asStream()
         )
 
         builder
@@ -89,9 +102,9 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
             .addIngredients(applicable)
             .setStandardSlotBackground()
 
-        val conflicts = BuiltInRegistries.ENCHANTMENT.asSequence()
-            .filter { it != recipe && !it.isCompatibleWith(recipe) }
-            .toList()
+        val conflicts =
+            Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .filter { it != recipe && !it.isCompatibleWith(recipe) }
         if (conflicts.isNotEmpty()) {
             height += 20
             builder
@@ -109,24 +122,28 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
         }
     }
 
-    override fun createRecipeExtras(builder: IRecipeExtrasBuilder, recipe: Enchantment, focuses: IFocusGroup) {
+    override fun createRecipeExtras(builder: IRecipeExtrasBuilder, enchantment: Enchantment, focuses: IFocusGroup) {
         val rightWidth = width - 2 - 18
         height = BASE_HEIGHT
 
         builder
             .addText(
-                Component.translatable(recipe.descriptionId)
+                enchantment.name.copy()
                     .append(" ")
-                    .append(Component.literal("${recipe.minLevel}~${recipe.maxLevel}").withStyle(ChatFormatting.BLUE)),
+                    .append(
+                        Component.literal("${enchantment.minLevel}~${enchantment.maxLevel}")
+                            .withStyle(ChatFormatting.BLUE)
+                    ),
                 rightWidth, 10
             )
             .setColor(ChatFormatting.WHITE.color!!)
             .setPosition(20, 0)
             .setShadow(true)
 
-        if (I18n.exists("${recipe.descriptionId}.desc")) {
+        val description = enchantment.description(enchantment.maxLevel)
+        if (description != null) {
             builder.addText(
-                Component.translatable("${recipe.descriptionId}.desc"),
+                description,
                 rightWidth,
                 if (builder.recipeSlots.findSlotByName(EXCLUSION).isPresent) 40 else 20
             ).setPosition(20, 21)
@@ -139,56 +156,56 @@ class EnchantmentRecipeCategory(val guiHelper: IGuiHelper) : IRecipeCategory<Enc
             val x = (size % 12) * 10 + 20
             val y = propertiesTop + (size / 12) * 10
             size++
-            builder.addDrawable(icon, x, y)
-            tooltips.getOrPut(recipe) { mutableMapOf() }[Vector4i(x, y, 8, 8)] = component
+            addDrawable(icon, x, y)
+            tooltips.getOrPut(enchantment) { mutableMapOf() }[Vector4i(x, y, 8, 8)] = component
         }
 
-        MoreEnchantmentInfoClient.Sprites.CATEGORY_TO_TEXTURE[recipe.category]?.let {
-            builder.addProperty(DrawableSprite(it, 8, 8, 1, 1, 1, 1)) {
+        for (category in enchantment.supportedCategories) {
+            builder.addProperty(DrawableSprite(category, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable(
                     "gui.more_enchantment_info.category",
                     Component.translatable(
                         "gui.more_enchantment_info.category.${
-                            recipe.category.toString().lowercase()
+                            category.path.removePrefix("category_")
                         }"
                     )
                 )
             }
         }
-        MoreEnchantmentInfoClient.Sprites.RARITY_TO_TEXTURE[recipe.rarity]?.let {
-            builder.addProperty(DrawableSprite(it, 8, 8, 1, 1, 1, 1)) {
+
+        builder.addProperty(DrawableSprite(enchantment.raritySprite, 8, 8, 1, 1, 1, 1)) {
+            Component.translatable(
+                "gui.more_enchantment_info.rarity",
                 Component.translatable(
-                    "gui.more_enchantment_info.rarity",
-                    Component.translatable(
-                        "gui.more_enchantment_info.rarity.${
-                            recipe.rarity.toString().lowercase()
-                        }"
-                    )
+                    "gui.more_enchantment_info.rarity.${
+                        enchantment.raritySprite.path.removePrefix("rarity_")
+                    }"
                 )
-            }
+            )
         }
-        if (recipe.isDiscoverable) {
-            builder.addProperty(DrawableSprite(MoreEnchantmentInfoClient.Sprites.DISCOVERABLE, 8, 8, 1, 1, 1, 1)) {
+
+        if (enchantment.isLootable) {
+            builder.addProperty(DrawableSprite(MoreEnchantmentInfoSprites.DISCOVERABLE, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable("gui.more_enchantment_info.discoverable")
             }
         }
-        if (recipe.isDiscoverable && !recipe.isTreasureOnly) {
-            builder.addProperty(DrawableSprite(MoreEnchantmentInfoClient.Sprites.ENCHANTABLE, 8, 8, 1, 1, 1, 1)) {
+        if (enchantment.isInTable) {
+            builder.addProperty(DrawableSprite(MoreEnchantmentInfoSprites.ENCHANTABLE, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable("gui.more_enchantment_info.enchantable")
             }
         }
-        if (recipe.isTradeable) {
-            builder.addProperty(DrawableSprite(MoreEnchantmentInfoClient.Sprites.TRADEABLE, 8, 8, 1, 1, 1, 1)) {
+        if (enchantment.isTradeable) {
+            builder.addProperty(DrawableSprite(MoreEnchantmentInfoSprites.TRADEABLE, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable("gui.more_enchantment_info.tradeable")
             }
         }
-        if (recipe.isTreasureOnly) {
-            builder.addProperty(DrawableSprite(MoreEnchantmentInfoClient.Sprites.TREASURE, 8, 8, 1, 1, 1, 1)) {
+        if (enchantment.isTreasure) {
+            builder.addProperty(DrawableSprite(MoreEnchantmentInfoSprites.TREASURE, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable("gui.more_enchantment_info.treasure")
             }
         }
-        if (recipe.isCurse) {
-            builder.addProperty(DrawableSprite(MoreEnchantmentInfoClient.Sprites.CURSE, 8, 8, 1, 1, 1, 1)) {
+        if (enchantment.isCurse) {
+            builder.addProperty(DrawableSprite(MoreEnchantmentInfoSprites.CURSE, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable("gui.more_enchantment_info.curse")
             }
         }

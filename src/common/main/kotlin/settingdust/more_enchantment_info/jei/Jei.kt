@@ -7,7 +7,8 @@ import mezz.jei.api.registration.IModIngredientRegistration
 import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.runtime.IJeiRuntime
-import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.Registries
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 
 @JeiPlugin
@@ -37,15 +38,15 @@ class JEIMoreEnchantmentInfo : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        registration.addRecipes(EnchantmentRecipeCategory.TYPE, buildList {
-            BuiltInRegistries.ENCHANTMENT.forEach { enchantment -> add(enchantment) }
-        })
+        val registry = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+        registration.addRecipes(EnchantmentRecipeCategory.TYPE, registry.toList())
     }
 
     override fun registerIngredients(registration: IModIngredientRegistration) {
+        val registry = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
         registration.register(
             EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT,
-            BuiltInRegistries.ENCHANTMENT.toSet(),
+            registry.toSet(),
             EnchantmentIngredientHelper,
             EnchantmentIngredientRenderer
         )
