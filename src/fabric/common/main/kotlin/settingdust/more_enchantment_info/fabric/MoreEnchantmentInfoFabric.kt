@@ -33,17 +33,17 @@ object MoreEnchantmentInfoFabric {
             override fun reload(
                 preparationBarrier: PreparableReloadListener.PreparationBarrier,
                 resourceManager: ResourceManager,
-                profilerFiller: ProfilerFiller,
-                profilerFiller2: ProfilerFiller,
-                executor: Executor,
-                executor2: Executor
+                preparationsProfiler: ProfilerFiller,
+                reloadProfiler: ProfilerFiller,
+                backgroundExecutor: Executor,
+                gameExecutor: Executor
             ) = MoreEnchantmentInfoSpriteUploader.INSTANCE.reload(
                 preparationBarrier,
                 resourceManager,
-                profilerFiller,
-                profilerFiller2,
-                executor,
-                executor2
+                preparationsProfiler,
+                reloadProfiler,
+                backgroundExecutor,
+                gameExecutor
             )
         })
         Entrypoint.clientInit()

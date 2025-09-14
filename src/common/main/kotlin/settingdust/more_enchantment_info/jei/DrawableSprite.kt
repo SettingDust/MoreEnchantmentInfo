@@ -42,7 +42,7 @@ class DrawableSprite(
         maskLeft: Int,
         maskRight: Int
     ) {
-        val sprite = MoreEnchantmentInfoSpriteUploader.INSTANCE.getSprite(location)
+        val sprite = MoreEnchantmentInfoSpriteUploader.INSTANCE.getSprite(location) ?: error("Sprite $location not found")
         val textureWidth = width
         val textureHeight = height
 
