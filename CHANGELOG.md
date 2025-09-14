@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-09-14
+### :sparkles: New Features
+- [`ba814af`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/ba814af8c575c2d1cfb6ce9c57a2d5618da11ed8) - support 1.21.1 fabric *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`63d977b`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/63d977b56dbec2f47cfe45accbb9aca0b45c38ac) - support 1.20.1 forge *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`a4b13af`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/a4b13aff9e7dd1a0dbd8412882013241f6ccd81a) - support 1.21.1 neoforge *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+### :recycle: Refactors
+- [`c4923c6`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/c4923c6746f34eeba67f49efa4c7ff89a8e5e077) - readd 1.20.1 fabric support *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.2.0] - 2025-01-23
 ### :bug: Bug Fixes
 - [`9262b96`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/9262b96e69cbbb89930e2f4bb75242582de3fe14) - internal function can't compile *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -29,3 +39,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.0.0...0.1.0
 [0.1.1]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.1.0...0.1.1
 [0.2.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.1.1...0.2.0
+[0.3.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.2.0...0.3.0
