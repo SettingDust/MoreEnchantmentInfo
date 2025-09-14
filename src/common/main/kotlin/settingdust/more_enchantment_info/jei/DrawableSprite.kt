@@ -53,8 +53,8 @@ class DrawableSprite(
         val y = yOffset + maskTop + paddingTop
         val width = width - maskRight - maskLeft
         val height = height - maskBottom - maskTop
-        val uSize = sprite.u0 - sprite.u1
-        val vSize = sprite.v0 - sprite.v1
+        val uSize = sprite.u1 - sprite.u0
+        val vSize = sprite.v1 - sprite.v0
 
         val minU = sprite.u0 + uSize * (maskLeft / textureWidth.toFloat())
         val minV = sprite.v0 + vSize * (maskTop / textureHeight.toFloat())

@@ -43,7 +43,7 @@ interface EnchantmentAdapter {
 
         fun Enchantment.findDescriptionKey(level: Int): String? {
             for (descriptionKey in DESCRIPTION_KEYS) {
-                var key = "${nameKey}.${descriptionKey}"
+                var key = "${descriptionPrefix}.${descriptionKey}"
                 if (I18n.exists(key)) {
                     return key
                 }
@@ -56,7 +56,7 @@ interface EnchantmentAdapter {
         }
     }
 
-    val Enchantment.nameKey: String
+    val Enchantment.descriptionPrefix: String
     val Enchantment.name: Component
 
     fun Enchantment.isCompatibleWith(other: Enchantment): Boolean

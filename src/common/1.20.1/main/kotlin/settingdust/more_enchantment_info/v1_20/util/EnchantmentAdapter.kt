@@ -42,10 +42,10 @@ class EnchantmentAdapter : EnchantmentAdapter {
         )
     }
 
-    override val Enchantment.nameKey: String
+    override val Enchantment.descriptionPrefix: String
         get() = descriptionId
     override val Enchantment.name: Component
-        get() = Component.translatable(nameKey)
+        get() = Component.translatable(descriptionId)
 
     override fun Enchantment.isCompatibleWith(other: Enchantment) = isCompatibleWith(other)
 

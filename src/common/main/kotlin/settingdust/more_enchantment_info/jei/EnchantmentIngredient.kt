@@ -6,7 +6,7 @@ import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.ingredients.subtypes.UidContext
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.resources.language.I18n
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.world.item.EnchantedBookItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
@@ -14,8 +14,7 @@ import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.holder
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
-import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.nameKey
-import settingdust.more_enchantment_info.util.MinecraftAdapter.Companion.getTooltipLines
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
 import java.util.stream.Stream
 
 object EnchantmentIngredientHelper : IIngredientHelper<Enchantment> {
@@ -23,7 +22,7 @@ object EnchantmentIngredientHelper : IIngredientHelper<Enchantment> {
 
     override fun getIngredientType() = ENCHANTMENT_INGREDIENT
 
-    override fun getDisplayName(ingredient: Enchantment) = I18n.get(ingredient.nameKey)
+    override fun getDisplayName(ingredient: Enchantment) = ingredient.name.string
 
     override fun getUniqueId(
         ingredient: Enchantment,
@@ -34,7 +33,7 @@ object EnchantmentIngredientHelper : IIngredientHelper<Enchantment> {
 
     override fun copyIngredient(ingredient: Enchantment) = ingredient
 
-    override fun getErrorInfo(ingredient: Enchantment?) = ingredient?.nameKey ?: "null"
+    override fun getErrorInfo(ingredient: Enchantment?) = ingredient?.key.toString()
 
     override fun getTagStream(ingredient: Enchantment) =
         ingredient.holder?.tags()?.map { it.location() } ?: Stream.empty()
@@ -55,6 +54,5 @@ object EnchantmentIngredientRenderer : IIngredientRenderer<Enchantment> {
     override fun getTooltip(
         ingredient: Enchantment,
         tooltipFlag: TooltipFlag
-    ) = EnchantmentIngredientHelper.getCheatItemStack(ingredient)
-        .getTooltipLines(Minecraft.getInstance().player, tooltipFlag)
+    ) =  Screen.getTooltipFromItem(Minecraft.getInstance(), EnchantmentIngredientHelper.getCheatItemStack(ingredient))
 }

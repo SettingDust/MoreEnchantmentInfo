@@ -44,10 +44,8 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
         private const val APPLICABLE = "APPLICABLE"
         private const val EXCLUSION = "EXCLUSION"
 
-        private const val BASE_HEIGHT = 40
+        private const val BASE_HEIGHT = 60
     }
-
-    private var height = BASE_HEIGHT
 
     private val tooltips: MutableMap<Enchantment, MutableMap<Vector4ic, () -> Component>> = mutableMapOf()
 
@@ -59,7 +57,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
 
     override fun getWidth() = 144
 
-    override fun getHeight() = height
+    override fun getHeight() = BASE_HEIGHT
 
     override fun getRegistryName(recipe: Enchantment) =
         Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getKey(recipe)
@@ -106,7 +104,6 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                 .filter { it != recipe && !it.isCompatibleWith(recipe) }
         if (conflicts.isNotEmpty()) {
-            height += 20
             builder
                 .addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 41)
                 .setSlotName(EXCLUSION)
@@ -124,7 +121,6 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
 
     override fun createRecipeExtras(builder: IRecipeExtrasBuilder, enchantment: Enchantment, focuses: IFocusGroup) {
         val rightWidth = width - 2 - 18
-        height = BASE_HEIGHT
 
         builder
             .addText(
@@ -142,11 +138,15 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
 
         val description = enchantment.description(enchantment.maxLevel)
         if (description != null) {
-            builder.addText(
-                description,
-                rightWidth,
-                if (builder.recipeSlots.findSlotByName(EXCLUSION).isPresent) 40 else 20
-            ).setPosition(20, 21)
+            builder
+                .addText(
+                    description,
+                    rightWidth,
+                    40
+                )
+                .setPosition(20, 21)
+                .setLineSpacing(1)
+                .setColor(ChatFormatting.DARK_GRAY.color!!)
         }
 
         val propertiesTop = 10

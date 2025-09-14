@@ -17,8 +17,10 @@ object VersionFormats {
 }
 
 object VersionTransformers {
-    val versionDashLoader = { ver: String, variant: String -> "$ver-$variant" }
-    val loaderUnderlineVersion = { ver: String, variant: String -> "${variant}_$ver" }
+    val versionDashLoader = { ver: String, variant: String, _: String -> "$ver-$variant" }
+    val loaderUnderlineVersion = { ver: String, variant: String, _: String -> "${variant}_$ver" }
+    val versionDashLoaderCommaMcVersion =
+        { ver: String, variant: String, mcVersion: String -> "$ver-$variant,$mcVersion" }
 }
 
 object ArtifactTransformers {
@@ -31,7 +33,7 @@ object ArtifactTransformers {
 
 open class VariantConfig(
     val artifactTransformer: (artifact: String, variant: String, mcVersion: String) -> String = { artifact, _, _ -> artifact },
-    val versionTransformer: (version: String, variant: String) -> String = { ver, _ -> ver }
+    val versionTransformer: (version: String, variant: String, mcVersion: String) -> String = { ver, _, _ -> ver }
 ) {
     companion object : VariantConfig()
 }
@@ -65,7 +67,7 @@ fun VersionCatalogBuilder.modrinth(
                 else "${id}_$loaderName",
                 "maven.modrinth",
                 loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName))
+            ).version(loader.versionTransformer(version, loaderName, mcVersion))
         }
         return
     }
@@ -82,7 +84,7 @@ fun VersionCatalogBuilder.modrinth(
                 else "${id}_${mcVersion}_$loaderName",
                 "maven.modrinth",
                 loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName))
+            ).version(loader.versionTransformer(version, loaderName, mcVersion))
         }
     }
 }
@@ -112,7 +114,7 @@ fun VersionCatalogBuilder.maven(
                 else "${id}_$loaderName",
                 group,
                 loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName))
+            ).version(loader.versionTransformer(version, loaderName, mcVersion))
         }
         return
     }
@@ -134,7 +136,7 @@ fun VersionCatalogBuilder.maven(
                 },
                 group,
                 loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName))
+            ).version(loader.versionTransformer(version, loaderName, mcVersion))
         }
     }
 }
@@ -175,6 +177,68 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
                 "1.21.1", mapOf(
                     "neoforge" to VariantConfig(ArtifactTransformers.artifactDashMcVersionDashLoader),
                     "fabric" to VariantConfig(ArtifactTransformers.artifactDashMcVersionDashLoader)
+                )
+            )
+        )
+    )
+
+    modrinth(
+        id = "enchantmentDescriptions",
+        artifact = "enchantment-descriptions",
+        mcVersionToVersion = mapOf(
+            "1.20.1" to "17.1.19",
+            "1.21.1" to "21.1.8"
+        ),
+        mapping = listOf(
+            VariantMapping(
+                "1.20.1", mapOf(
+                    "forge" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                    "fabric" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                )
+            ),
+            VariantMapping(
+                "1.21.1", mapOf(
+                    "neoforge" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                    "fabric" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                )
+            )
+        )
+    )
+
+    modrinth(
+        id = "bookshelf",
+        artifact = "bookshelf-lib",
+        mcVersionToVersion = mapOf(
+            "1.20.1" to "20.2.13",
+            "1.21.1" to "21.1.69"
+        ),
+        mapping = listOf(
+            VariantMapping(
+                "1.20.1", mapOf(
+                    "forge" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                    "fabric" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                )
+            ),
+            VariantMapping(
+                "1.21.1", mapOf(
+                    "neoforge" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                    "fabric" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                )
+            )
+        )
+    )
+
+    modrinth(
+        id = "prickle",
+        artifact = "prickle",
+        mcVersionToVersion = mapOf(
+            "1.21.1" to "21.1.11"
+        ),
+        mapping = listOf(
+            VariantMapping(
+                "1.21.1", mapOf(
+                    "neoforge" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
+                    "fabric" to VariantConfig(versionTransformer = VersionTransformers.versionDashLoaderCommaMcVersion),
                 )
             )
         )

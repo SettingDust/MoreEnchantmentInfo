@@ -176,6 +176,9 @@ cloche {
                 fabricApi("0.92.6")
 
                 modImplementation(catalog.jei.get1().get20().get1().fabric)
+
+                modRuntimeOnly(catalog.enchantmentDescriptions.get1().get20().get1().fabric)
+                modRuntimeOnly(catalog.bookshelf.get1().get20().get1().fabric)
             }
 
             tasks.named<GenerateFabricModJson>(generateModsManifestTaskName) {
@@ -212,6 +215,10 @@ cloche {
                 fabricApi("0.116.6")
 
                 modImplementation(catalog.jei.get1().get21().get1().fabric)
+
+                modRuntimeOnly(catalog.enchantmentDescriptions.get1().get21().get1().fabric)
+                modRuntimeOnly(catalog.bookshelf.get1().get21().get1().fabric)
+                modRuntimeOnly(catalog.prickle.fabric)
             }
 
             tasks.named<GenerateFabricModJson>(generateModsManifestTaskName) {
@@ -371,6 +378,9 @@ cloche {
                 modImplementation("thedarkcolour:kotlinforforge:4.11.0")
 
                 modImplementation(catalog.jei.get1().get20().get1().forge)
+
+                modRuntimeOnly(catalog.enchantmentDescriptions.get1().get20().get1().forge)
+                modRuntimeOnly(catalog.bookshelf.get1().get20().get1().forge)
             }
         }
     }
@@ -398,6 +408,9 @@ cloche {
                 modImplementation("thedarkcolour:kotlinforforge-neoforge:5.9.0")
 
                 modImplementation(catalog.jei.get1().get21().get1().neoforge)
+                modRuntimeOnly(catalog.enchantmentDescriptions.get1().get21().get1().neoforge)
+                modRuntimeOnly(catalog.bookshelf.get1().get21().get1().neoforge)
+                modRuntimeOnly(catalog.prickle.neoforge)
             }
         }
 
