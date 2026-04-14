@@ -1,17 +1,18 @@
 # More Enchantment Info
 
-Adding enchantment information to JEI
-![img.png](https://github.com/SettingDust/MoreEnchantmentInfo/raw/refs/heads/main/img.png)
-![img_1.png](https://github.com/SettingDust/MoreEnchantmentInfo/raw/refs/heads/main/img_1.png)
+Adds enchantment information directly into JEI.
+
+![JEI enchantment overview](https://github.com/SettingDust/MoreEnchantmentInfo/raw/refs/heads/main/img.png)
+![JEI enchantment details](https://github.com/SettingDust/MoreEnchantmentInfo/raw/refs/heads/main/img_1.png)
 
 ## Features
 
-- Supporting enchantment descriptions
-- Enchantment properties such as tradeable, discoverable, category, rarity, etc.
+- Enchantment descriptions
+- Enchantment properties (tradeable, discoverable, category, rarity, etc.)
 - Applicable items
 - Enchantment conflicts
 
-## Credit
+## Credits
 
 - https://modrinth.com/resourcepack/jowys-8x8-classic_style_items
 - https://modrinth.com/resourcepack/unfaithful-8x
