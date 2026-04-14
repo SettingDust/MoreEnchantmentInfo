@@ -24,10 +24,10 @@ object MoreEnchantmentInfoFabric {
 
     fun clientInit() {
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(object : IdentifiableResourceReloadListener {
-            private val ID = MoreEnchantmentInfo.identifier("sprite_uploader")
+            private val SPRITE_ID = MoreEnchantmentInfo.id("sprite_uploader")
 
             override fun getFabricId(): ResourceLocation {
-                return ID
+                return SPRITE_ID
             }
 
             override fun reload(

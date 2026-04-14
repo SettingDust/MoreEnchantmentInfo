@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier
+_commit: 0.1.8-52-g29e84e7
+_src_path: https://github.com/SettingDust/cloche-template
+author: SettingDust
+description: Adding enchantment information to JEI
+group: settingdust.more_enchantment_info
+has_service: false
+id: more_enchantment_info
+language: kotlin
+license: ARR
+name: MoreEnchantmentInfo
+slug: more-enchantment-info

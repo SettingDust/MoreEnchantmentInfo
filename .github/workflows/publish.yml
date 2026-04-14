@@ -15,19 +15,23 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
 
-      - name: Execute Gradle build
-        run: ./gradlew remapFabricMinecraftIntermediary build
-
-      - name: Update CHANGELOG
-        id: changelog
-        uses: requarks/changelog-action@v1
+      - uses: burrunan/gradle-cache-action@v3
+        name: Execute Gradle build
         with:
-          token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
+          arguments: build
+
+      - name: Get CHANGELOG
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v6
+
+      - name: Git Status
+        run: |
+          git status --porcelain
+          ./gradlew printVersion
 
       - name: Upload bundled jar
         uses: Kir-Antipov/mc-publish@v3.3.0
@@ -40,72 +44,42 @@ jobs:
 
           # Only include this section if you wish to publish
           # your assets on CurseForge.
-          curseforge-id: 1166503
+          curseforge-id: 000000
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files: |
             build/libs/!(*-@(fabric*|neoforge*|forge*|sources)).jar
-            build/libs/*-@(fabric-*|neoforge-*|sources).jar
-
-          version: ${{ github.ref_name }}
-
-          loaders: |
-            neoforge
-            fabric
-
-          game-versions: |
-            1.20.1
-            1.21
-            1.21.1
-          game-version-filter: releases
-
-          dependencies: |
-            fabric-language-kotlin
-            kotlin-for-forge
-            jei(optional)
-            
-
-          java: |
-            17
-            21
-
-      - name: Upload forge jar
-        uses: Kir-Antipov/mc-publish@v3.3.0
-        with:
-          changelog: ${{ steps.changelog.outputs.changes }}
-          # Only include this section if you wish to publish
-          # your assets on Modrinth.
-          modrinth-id: more-enchantment-info
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-          # Only include this section if you wish to publish
-          # your assets on CurseForge.
-          curseforge-id: 1166503
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-
-          files: |
-            build/libs/*-forge-*.jar
+            build/libs/*-@(fabric-*|neoforge-*|forge-*|sources).jar
 
           version: ${{ github.ref_name }}
 
           loaders: |
             forge
+            neoforge
+            fabric
 
           game-versions: |
             1.20.1
+            [1.21,)
+
           game-version-filter: releases
 
           dependencies: |
             fabric-language-kotlin
             kotlin-for-forge
-            jei(optional)
-          
+            preloading-tricks
 
           java: |
             17
+            21
+
+      - name: Update CHANGELOG
+        uses: mikepenz/release-changelog-builder-action@v6
+        with:
+          outputFile: CHANGELOG.MD
 
       - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
           commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
