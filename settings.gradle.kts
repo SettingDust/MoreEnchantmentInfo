@@ -132,6 +132,7 @@ fun VersionCatalogBuilder.dependency(id: String, group: String, block: MultiVers
     }
 }
 
+@Suppress("SpellCheckingInspection")
 fun VersionCatalogBuilder.modrinth(id: String, block: MultiVersionDepBuilder.() -> Unit) {
     dependency(id, "maven.modrinth", block)
 }
@@ -169,11 +170,11 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
 
         version("21") {
-            modVersion = "3.0"
+            modVersion = "3.1"
             loader("neoforge") { version(VersionFormatter.plusLoader) }
         }
 
-        version("21.10") {
+        version("26") {
             modVersion = "3.1"
             loader("neoforge") { version(VersionFormatter.plusLoader) }
         }

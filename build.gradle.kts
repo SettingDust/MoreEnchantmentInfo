@@ -504,24 +504,15 @@ cloche {
         dependsOn(commonMain)
         // mixins.from("src/common/21.1/main/resources/$id.21_1.mixins.json")
     }
+    val common261 = common("common:26.1") {
+        dependsOn(commonMain)
+        // mixins.from("src/common/26.1/main/resources/$id.26_1.mixins.json")
+    }
 
     // endregion
 
     // region Game Targets
 
-    val game = common("game") {
-        // mixins.from(files("src/game/main/resources/$id.game.mixins.json"))
-        // accessWideners.from(file("src/game/main/resources/$id.game.accessWidener"))
-
-        dependsOn(commonMain)
-    }
-
-    val game201 = common("game:20.1") {
-        dependsOn(game, common201)
-    }
-    val game211 = common("game:21.1") {
-        dependsOn(game, common211)
-    }
 
     // endregion
 
@@ -606,7 +597,7 @@ cloche {
     }
 
     val fabric201 = fabric("fabric:20.1") {
-        dependsOn(common201, game201, fabricCommon)
+        dependsOn(common201, fabricCommon)
 
         minecraftVersion = "1.20.1"
 
@@ -627,7 +618,7 @@ cloche {
     }
 
     val fabric211 = fabric("fabric:21.1") {
-        dependsOn(common211, game211, fabricCommon)
+        dependsOn(common211, fabricCommon)
 
         minecraftVersion = "1.21.1"
 
@@ -646,12 +637,28 @@ cloche {
         }
     }
 
+    val fabric261 = fabric("fabric:26.1") {
+        dependsOn(common261, fabricCommon)
+
+        minecraftVersion = "26.1.2"
+
+        metadata {
+            dependency {
+                modId = "minecraft"
+                type = CommonMetadata.Dependency.Type.Required
+                version {
+                    start = "26.1"
+                }
+            }
+        }
+    }
+
     // endregion
 
     // region Main Targets - Forge
 
     val forgeGame = forge("forge:game") {
-        dependsOn(game201)
+        dependsOn(common201)
 
         minecraftVersion = "1.20.1"
 
@@ -712,7 +719,7 @@ cloche {
 
 
     val neoforgeGame = neoforge("neoforge:game") {
-        dependsOn(game211)
+        dependsOn(common211)
 
         minecraftVersion = "1.21.1"
 
@@ -754,6 +761,46 @@ cloche {
         }
     }
 
+    val neoforgeGame261 = neoforge("neoforge:game:26.1") {
+        dependsOn(common261)
+
+        minecraftVersion = "26.1.2"
+
+        metadata {
+            modLoader = "klf"
+            loaderVersion {
+                start = "1"
+            }
+
+            dependency {
+                modId = "minecraft"
+                type = CommonMetadata.Dependency.Type.Required
+                version {
+                    start = "26.1"
+                }
+            }
+
+            dependency {
+                modId = "preloading_tricks"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+        }
+
+        dependencies {
+            modImplementation(catalog.klf.mc26.neoforge)
+        }
+
+        tasks {
+            named<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
+                manifest {
+                    attributes(
+                        "ForgeVariant" to "NeoForge"
+                    )
+                }
+            }
+        }
+    }
+
     // endregion
 
     // region Containers
@@ -777,6 +824,7 @@ cloche {
         dependencies {
             includeTarget(fabric201)
             includeTarget(fabric211)
+            includeTarget(fabric261)
         }
 
         jar {
@@ -810,6 +858,7 @@ cloche {
     val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
         dependencies {
             includeTarget(neoforgeGame)
+            includeTarget(neoforgeGame261)
         }
 
         jar {
@@ -859,6 +908,16 @@ cloche {
             modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.fabric)
             modRuntimeOnly(catalog.bookshelf.mc1211.fabric)
             modRuntimeOnly(catalog.prickle.fabric)
+        }
+    }
+
+    fabric("version:fabric:26.1") {
+        minecraftVersion = "26.1.2"
+
+        runs { client() }
+
+        dependencies {
+            runtimeOnly(container(fabricContainer))
         }
     }
 
@@ -915,6 +974,20 @@ cloche {
         }
     }
 
+    neoforge("version:neoforge:26.1") {
+        minecraftVersion = "26.1.2"
+
+        runs {
+            client {
+                env("MOD_CLASSES", "")
+            }
+        }
+
+        dependencies {
+            runtimeOnly(container(neoforgeContainer))
+        }
+    }
+
     // endregion
 }
 
@@ -923,6 +996,7 @@ cloche {
 fun String.fabricApiVersion(): String? = when (this) {
     "1.20.1" -> "0.92.7"
     "1.21.1" -> "0.116.10"
+    "26.1.2" -> "0.145.4"
     else -> null
 }
 
@@ -939,6 +1013,7 @@ fun String.forgeLoaderVersion(): String? = when (this) {
 
 fun String.neoForgeLoaderVersion(): String? = when (this) {
     "1.21.1" -> "21.1.192"
+    "26.1.2" -> "26.1.2.7-beta"
     else -> null
 }
 
