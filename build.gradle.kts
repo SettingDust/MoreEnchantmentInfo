@@ -15,14 +15,11 @@ import earth.terrarium.cloche.api.attributes.RemapNamespaceAttribute
 import earth.terrarium.cloche.api.attributes.TargetAttributes
 import earth.terrarium.cloche.api.metadata.CommonMetadata
 import earth.terrarium.cloche.api.metadata.FabricMetadata
-import earth.terrarium.cloche.api.target.FabricTarget
-import earth.terrarium.cloche.api.target.ForgeLikeTarget
-import earth.terrarium.cloche.api.target.ForgeTarget
-import earth.terrarium.cloche.api.target.MinecraftTarget
-import earth.terrarium.cloche.api.target.NeoforgeTarget
+import earth.terrarium.cloche.api.target.*
 import earth.terrarium.cloche.api.target.compilation.ClocheDependencyHandler
 import earth.terrarium.cloche.target.LazyConfigurableInternal
 import earth.terrarium.cloche.tasks.GenerateFabricModJson
+import earth.terrarium.cloche.util.fromJars
 import earth.terrarium.cloche.util.target
 import groovy.lang.Closure
 import net.msrandom.minecraftcodev.core.utils.lowerCamelCaseGradleName
@@ -31,8 +28,8 @@ import net.msrandom.minecraftcodev.forge.task.JarJar
 import net.msrandom.minecraftcodev.runs.MinecraftRunConfiguration
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
-import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.support.serviceOf
 import java.nio.charset.StandardCharsets
 
 plugins {
@@ -241,6 +238,7 @@ class ContainerScope(
                 destinationDirectory = intermediateOutputsDirectory
             }
             input = jarTask.flatMap { it.archiveFile }
+            manifest.fromJars(serviceOf(), input)
             fromResolutionResults(configuration)
         }
 
@@ -251,6 +249,7 @@ class ContainerScope(
                 destinationDirectory = intermediateOutputsDirectory
             }
             input = jarTask.flatMap { it.archiveFile }
+            manifest.fromJars(serviceOf(), input)
             fromResolutionResults(configuration)
         }
     }
@@ -463,7 +462,7 @@ cloche {
         modId = id
         name = rootProject.property("name").toString()
         description = rootProject.property("description").toString()
-        license = "ARR"
+        license = "Apache License 2.0"
         icon = "assets/$id/icon.png"
         sources = source
         issues = "$source/issues"
@@ -518,10 +517,10 @@ cloche {
     }
 
     val game201 = common("game:20.1") {
-        dependsOn(game)
+        dependsOn(game, common201)
     }
     val game211 = common("game:21.1") {
-        dependsOn(game)
+        dependsOn(game, common211)
     }
 
     // endregion
@@ -534,7 +533,7 @@ cloche {
         includedClient()
 
         metadata {
-            
+
             entrypoint("main") {
                 adapter = "kotlin"
                 value = "$group.fabric.MoreEnchantmentInfoFabric::init"
@@ -554,19 +553,17 @@ cloche {
                 modId = "fabric-api"
                 type = CommonMetadata.Dependency.Type.Required
             }
-            
+
             dependency {
                 modId = "fabric-language-kotlin"
                 type = CommonMetadata.Dependency.Type.Required
             }
-            
+
         }
         dependencies {
             fabricApi(minecraftVersion.map(String::fabricApiVersion))
-            
 
-            modImplementation("net.fabricmc:fabric-language-kotlin:1.13.10+kotlin.2.3.20")
-            
+            modImplementation(catalog.fabric.language.kotlin)
         }
     }
 
@@ -626,8 +623,6 @@ cloche {
 
         dependencies {
             modImplementation(catalog.jei.mc1201.fabric)
-            modRuntimeOnly(catalog.enchantmentDescriptions.mc1201.fabric)
-            modRuntimeOnly(catalog.bookshelf.mc1201.fabric)
         }
     }
 
@@ -648,9 +643,6 @@ cloche {
 
         dependencies {
             modImplementation(catalog.jei.mc1211.fabric)
-            modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.fabric)
-            modRuntimeOnly(catalog.bookshelf.mc1211.fabric)
-            modRuntimeOnly(catalog.prickle.fabric)
         }
     }
 
@@ -683,7 +675,7 @@ cloche {
 
             dependency {
                 modId = "preloading_tricks"
-                type = CommonMetadata.Dependency.Type.Required
+                type = CommonMetadata.Dependency.Type.Recommended
             }
         }
 
@@ -702,8 +694,6 @@ cloche {
 
             modImplementation(catalog.klf.mc20.forge)
             modImplementation(catalog.jei.mc1201.forge)
-            modRuntimeOnly(catalog.enchantmentDescriptions.mc1201.forge)
-            modRuntimeOnly(catalog.bookshelf.mc1201.forge)
         }
 
         tasks {
@@ -745,16 +735,13 @@ cloche {
 
             dependency {
                 modId = "preloading_tricks"
-                type = CommonMetadata.Dependency.Type.Required
+                type = CommonMetadata.Dependency.Type.Recommended
             }
         }
 
         dependencies {
             modImplementation(catalog.klf.mc21.neoforge)
             modImplementation(catalog.jei.mc1211.neoforge)
-            modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.neoforge)
-            modRuntimeOnly(catalog.bookshelf.mc1211.neoforge)
-            modRuntimeOnly(catalog.prickle.neoforge)
         }
 
         tasks {
@@ -779,7 +766,7 @@ cloche {
             .map { it.dir("metadata").dir(featureName) }
         val generateModJson =
             tasks.register<GenerateFabricModJson>(lowerCamelCaseGradleName(featureName, "generateModJson")) {
-                modId = id
+                modId = "${id}_container"
                 metadata = objects.newInstance(FabricMetadata::class.java, fabric201).apply {
                     license.value(cloche.metadata.license)
                     dependencies.value(cloche.metadata.dependencies)
@@ -804,10 +791,16 @@ cloche {
     // region Forge Container
 
     val forgeContainer = container(loader = MinecraftModLoader.forge) {
-
         dependencies {
             includeTarget(forgeGame)
+        }
 
+        jar {
+            manifest {
+                attributes(
+                    "FMLModType" to "GAMELIBRARY"
+                )
+            }
         }
     }
 
@@ -816,12 +809,16 @@ cloche {
     // region NeoForge Container
 
     val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
-
         dependencies {
             includeTarget(neoforgeGame)
+        }
 
-            include(catalog.preloadingTricks)
-
+        jar {
+            manifest {
+                attributes(
+                    "FMLModType" to "GAMELIBRARY"
+                )
+            }
         }
     }
 
@@ -838,6 +835,13 @@ cloche {
 
         dependencies {
             runtimeOnly(container(fabricContainer))
+
+            modRuntimeOnly(catalog.fabric.language.kotlin)
+
+            modRuntimeOnly(catalog.jei.mc1201.fabric)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc1201.fabric)
+            modRuntimeOnly(catalog.bookshelf.mc1201.fabric)
         }
     }
 
@@ -848,6 +852,14 @@ cloche {
 
         dependencies {
             runtimeOnly(container(fabricContainer))
+
+            modRuntimeOnly(catalog.fabric.language.kotlin)
+
+            modRuntimeOnly(catalog.jei.mc1211.fabric)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.fabric)
+            modRuntimeOnly(catalog.bookshelf.mc1211.fabric)
+            modRuntimeOnly(catalog.prickle.fabric)
         }
     }
 
@@ -866,6 +878,14 @@ cloche {
 
         dependencies {
             runtimeOnly(container(forgeContainer))
+            runtimeOnly(catalog.preloadingTricks)
+
+            modRuntimeOnly(catalog.klf.mc20.forge)
+
+            modRuntimeOnly(catalog.jei.mc1201.forge)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc1201.forge)
+            modRuntimeOnly(catalog.bookshelf.mc1201.forge)
         }
     }
 
@@ -884,6 +904,15 @@ cloche {
 
         dependencies {
             runtimeOnly(container(neoforgeContainer))
+            runtimeOnly(catalog.preloadingTricks)
+
+            modRuntimeOnly(catalog.klf.mc21.neoforge)
+
+            modRuntimeOnly(catalog.jei.mc1211.neoforge)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.neoforge)
+            modRuntimeOnly(catalog.bookshelf.mc1211.neoforge)
+            modRuntimeOnly(catalog.prickle.neoforge)
         }
     }
 
@@ -991,12 +1020,6 @@ tasks {
         val neoforgeJar = project.tasks.named<Jar>(lowerCamelCaseGradleName("containerNeoforge", "includeJar"))
         from(neoforgeJar.map { zipTree(it.archiveFile) })
         manifest.from(neoforgeJar.get().manifest)
-
-        manifest {
-            attributes(
-                "FMLModType" to "GAMELIBRARY"
-            )
-        }
 
         mergeServiceFiles()
         append("META-INF/accesstransformer.cfg")

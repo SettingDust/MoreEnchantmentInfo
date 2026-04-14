@@ -132,7 +132,6 @@ fun VersionCatalogBuilder.dependency(id: String, group: String, block: MultiVers
     }
 }
 
-@Suppress("SpellCheckingInspection")
 fun VersionCatalogBuilder.modrinth(id: String, block: MultiVersionDepBuilder.() -> Unit) {
     dependency(id, "maven.modrinth", block)
 }
@@ -170,6 +169,11 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
 
         version("21") {
+            modVersion = "3.0"
+            loader("neoforge") { version(VersionFormatter.plusLoader) }
+        }
+
+        version("21.10") {
             modVersion = "3.1"
             loader("neoforge") { version(VersionFormatter.plusLoader) }
         }
@@ -183,6 +187,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("forge") { artifact { a, _, mc -> "$a-$mc-forge" } }
             loader("fabric") { artifact { a, _, mc -> "$a-$mc-fabric" } }
         }
+
         version("1.21.1") {
             modVersion = "19.22.1.316"
             loader("neoforge") { artifact { a, _, mc -> "$a-$mc-neoforge" } }
@@ -198,6 +203,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("forge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
+
         version("1.21.1") {
             modVersion = "21.1.8"
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
@@ -213,6 +219,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("forge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
+
         version("1.21.1") {
             modVersion = "21.1.69"
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
@@ -230,6 +237,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
     }
 
+    library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.10+kotlin.2.3.20")
 }
 
 // #endregion
