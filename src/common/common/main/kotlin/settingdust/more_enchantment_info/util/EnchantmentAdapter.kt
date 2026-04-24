@@ -7,10 +7,12 @@ import net.minecraft.core.Registry
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.item.enchantment.EnchantmentInstance
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
+import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getHolderOrNull
+import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getIdentifier
+import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.registryOrThrow
 import kotlin.jvm.optionals.getOrNull
 
 interface EnchantmentAdapter {
@@ -20,15 +22,16 @@ interface EnchantmentAdapter {
         val registry: Registry<Enchantment>?
             get() = Minecraft.getInstance().level?.registryAccess()?.registryOrThrow(Registries.ENCHANTMENT)
 
-        val Enchantment.key: ResourceLocation?
-            get() = registry?.getKey(this)
+        val Enchantment.key: Identifier?
+            get() = registry?.getIdentifier(this)
         val Enchantment.resourceKey: ResourceKey<Enchantment>?
             get() = registry?.getResourceKey(this)?.getOrNull()
         val Enchantment.holder: Holder<Enchantment>?
             get() {
-                return registry?.getHolder(resourceKey ?: return null)?.getOrNull()
+                return registry?.getHolderOrNull(resourceKey ?: return null)
             }
-        val Enchantment.raritySprite: ResourceLocation
+
+        val Enchantment.raritySprite: Identifier
             get() = when {
                 weight >= 10 -> MoreEnchantmentInfoSprites.RARITY_COMMON
                 weight >= 5 -> MoreEnchantmentInfoSprites.RARITY_UNCOMMON
@@ -67,7 +70,7 @@ interface EnchantmentAdapter {
     val Enchantment.isTradeable: Boolean
     val Enchantment.weight: Int
 
-    val Enchantment.supportedCategories: List<ResourceLocation>
+    val Enchantment.supportedCategories: List<Identifier>
 
     fun EnchantmentInstance(enchantment: Holder<Enchantment>, level: Int): EnchantmentInstance
 }

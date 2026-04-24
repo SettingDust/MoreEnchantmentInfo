@@ -1,18 +1,15 @@
 package settingdust.more_enchantment_info.jei
 
-import com.mojang.blaze3d.systems.RenderSystem
-import mezz.jei.api.gui.drawable.IDrawableStatic
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.GameRenderer
-import net.minecraft.resources.ResourceLocation
-import settingdust.more_enchantment_info.MoreEnchantmentInfoSpriteUploader
-import settingdust.more_enchantment_info.util.ServiceLoaderUtil
+import settingdust.more_enchantment_info.MoreEnchantmentInfo
+import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
+import settingdust.more_enchantment_info.util.GuiGraphics
+import settingdust.more_enchantment_info.util.Identifier
+import settingdust.more_enchantment_info.getSprite
 
-interface DrawableSpriteAdapter {
-    companion object : DrawableSpriteAdapter by ServiceLoaderUtil.findService()
-
+expect object DrawableSpriteAdapter {
     fun render(
         guiGraphics: GuiGraphics,
+        texture: Identifier,
         x: Int,
         y: Int,
         height: Int,
@@ -25,7 +22,7 @@ interface DrawableSpriteAdapter {
 }
 
 class DrawableSprite(
-    private val location: ResourceLocation,
+    private val location: Identifier,
     private val width: Int,
     private val height: Int,
     private val paddingTop: Int = 0,
@@ -42,12 +39,9 @@ class DrawableSprite(
         maskLeft: Int,
         maskRight: Int
     ) {
-        val sprite = MoreEnchantmentInfoSpriteUploader.INSTANCE.getSprite(location) ?: error("Sprite $location not found")
+        val sprite = MoreEnchantmentInfoSprites.getSprite(location) ?: error("Sprite $location not found")
         val textureWidth = width
         val textureHeight = height
-
-        RenderSystem.setShader { GameRenderer.getPositionTexShader() }
-        RenderSystem.setShaderTexture(0, MoreEnchantmentInfoSpriteUploader.LOCATION)
 
         val x = xOffset + maskLeft + paddingLeft
         val y = yOffset + maskTop + paddingTop
@@ -61,7 +55,18 @@ class DrawableSprite(
         val maxU = sprite.u1 - uSize * (maskRight / textureWidth.toFloat())
         val maxV = sprite.v1 - vSize * (maskBottom / textureHeight.toFloat())
 
-        DrawableSpriteAdapter.render(guiGraphics, x, y, height, minU, maxV, width, maxU, minV)
+        DrawableSpriteAdapter.render(
+            guiGraphics,
+            MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION,
+            x,
+            y,
+            height,
+            minU,
+            maxV,
+            width,
+            maxU,
+            minV
+        )
     }
 
     override fun getWidth() = width + paddingLeft + paddingRight

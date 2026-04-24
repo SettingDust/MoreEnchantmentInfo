@@ -9,5 +9,8 @@ object MoreEnchantmentInfo {
 
     val LOGGER = LogManager.getLogger()
 
+    val TEXTURE_ATLAS_LOCATION = MoreEnchantmentInfo.id("textures/atlas/gui.png")
+    val SPRITE_TEXTURE_LOCATION = MoreEnchantmentInfo.id("gui")
+
     fun id(path: String) = MinecraftAdapter.id(ID, path)
 }

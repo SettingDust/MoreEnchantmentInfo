@@ -1,5 +1,8 @@
 package settingdust.more_enchantment_info
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite
+import settingdust.more_enchantment_info.util.Identifier
+
 object MoreEnchantmentInfoSprites {
     val CATEGORY_ARMOR = MoreEnchantmentInfo.id("category_armor")
     val CATEGORY_ARMOR_HEAD = MoreEnchantmentInfo.id("category_armor_head")
@@ -27,3 +30,5 @@ object MoreEnchantmentInfoSprites {
     val RARITY_RARE = MoreEnchantmentInfo.id("rarity_rare")
     val RARITY_VERY_RARE = MoreEnchantmentInfo.id("rarity_very_rare")
 }
+
+expect fun MoreEnchantmentInfoSprites.getSprite(id: Identifier): TextureAtlasSprite?
