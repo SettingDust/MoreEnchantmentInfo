@@ -19,6 +19,7 @@ import earth.terrarium.cloche.api.target.*
 import earth.terrarium.cloche.api.target.compilation.ClocheDependencyHandler
 import earth.terrarium.cloche.target.LazyConfigurableInternal
 import earth.terrarium.cloche.tasks.GenerateFabricModJson
+import earth.terrarium.cloche.tasks.GenerateForgeModsToml
 import earth.terrarium.cloche.util.fromJars
 import earth.terrarium.cloche.util.target
 import groovy.lang.Closure
@@ -30,6 +31,7 @@ import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 
 plugins {
@@ -41,7 +43,7 @@ plugins {
 
     id("com.palantir.git-version") version "5.0.0"
     id("com.gradleup.shadow") version "9.4.1"
-    id("earth.terrarium.cloche") version "0.18.11-dust.2"
+    id("earth.terrarium.cloche") version "0.18.11-dust.7"
 }
 
 // region Project Properties
@@ -651,6 +653,10 @@ cloche {
                 }
             }
         }
+
+        dependencies {
+            modImplementation(catalog.jei.mc2612.fabric)
+        }
     }
 
     // endregion
@@ -736,6 +742,7 @@ cloche {
                 type = CommonMetadata.Dependency.Type.Required
                 version {
                     start = "1.21"
+                    end = "26"
                 }
             }
 
@@ -788,6 +795,8 @@ cloche {
 
         dependencies {
             modImplementation(catalog.klf.mc26.neoforge)
+
+            modImplementation(catalog.jei.mc2612.neoforge)
         }
 
         tasks {
@@ -830,43 +839,6 @@ cloche {
         jar {
             dependsOn(generateModJson)
             from(metadataDirectory)
-        }
-    }
-
-    // endregion
-
-    // region Forge Container
-
-    val forgeContainer = container(loader = MinecraftModLoader.forge) {
-        dependencies {
-            includeTarget(forgeGame)
-        }
-
-        jar {
-            manifest {
-                attributes(
-                    "FMLModType" to "GAMELIBRARY"
-                )
-            }
-        }
-    }
-
-    // endregion
-
-    // region NeoForge Container
-
-    val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
-        dependencies {
-            includeTarget(neoforgeGame)
-            includeTarget(neoforgeGame261)
-        }
-
-        jar {
-            manifest {
-                attributes(
-                    "FMLModType" to "GAMELIBRARY"
-                )
-            }
         }
     }
 
@@ -935,7 +907,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(container(forgeContainer))
+            runtimeOnly(target(forgeGame))
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc20.forge)
@@ -961,7 +933,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(container(neoforgeContainer))
+            runtimeOnly(target(neoforgeGame))
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc21.neoforge)
@@ -984,7 +956,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(container(neoforgeContainer))
+            runtimeOnly(target(neoforgeGame261))
         }
     }
 
@@ -1087,13 +1059,17 @@ tasks {
         from(fabricJar.map { zipTree(it.archiveFile) })
         manifest.from(fabricJar.get().manifest)
 
-        val forgeJar = project.tasks.named<Jar>(lowerCamelCaseGradleName("containerForge", "includeJar"))
+        val forgeJar = project.tasks.named<Jar>(lowerCamelCaseGradleName("forgeGame", "includeJar"))
         from(forgeJar.map { zipTree(it.archiveFile) })
         manifest.from(forgeJar.get().manifest)
 
-        val neoforgeJar = project.tasks.named<Jar>(lowerCamelCaseGradleName("containerNeoforge", "includeJar"))
-        from(neoforgeJar.map { zipTree(it.archiveFile) })
-        manifest.from(neoforgeJar.get().manifest)
+        val neoforge21Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame", "includeJar"))
+        from(neoforge21Jar.map { zipTree(it.archiveFile) })
+        manifest.from(neoforge21Jar.get().manifest)
+
+        val neoforge26Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame261", "includeJar"))
+        from(neoforge26Jar.map { zipTree(it.archiveFile) })
+        manifest.from(neoforge26Jar.get().manifest)
 
         mergeServiceFiles()
         append("META-INF/accesstransformer.cfg")
