@@ -194,6 +194,12 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("neoforge") { artifact { a, _, mc -> "$a-$mc-neoforge" } }
             loader("fabric") { artifact { a, _, mc -> "$a-$mc-fabric" } }
         }
+
+        version("26.1.2") {
+            modVersion = "29.5.0.26"
+            loader("neoforge") { artifact { a, _, mc -> "$a-$mc-neoforge" } }
+            loader("fabric") { artifact { a, _, mc -> "$a-$mc-fabric" } }
+        }
     }
 
     modrinth("enchantmentDescriptions") {
