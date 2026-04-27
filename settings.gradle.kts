@@ -170,7 +170,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
 
         version("21") {
-            modVersion = "3.1"
+            modVersion = "3.0"
             loader("neoforge") { version(VersionFormatter.plusLoader) }
         }
 

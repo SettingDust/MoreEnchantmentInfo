@@ -9,6 +9,7 @@ import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.resources.PreparableReloadListener
 import net.minecraft.server.packs.resources.ResourceManager
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 
@@ -17,16 +18,17 @@ object MoreEnchantmentInfoAtlasManager : PreparableReloadListener, AutoCloseable
         PreparableReloadListener.StateKey()
     private val textureManager: TextureManager = Minecraft.getInstance().textureManager
     private val config: Config = Config(
-        MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION,
-        MoreEnchantmentInfo.SPRITE_TEXTURE_LOCATION,
+        MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION.toNativeIdentifier(),
+        MoreEnchantmentInfo.SPRITE_TEXTURE_LOCATION.toNativeIdentifier(),
         emptySet()
     )
 
     private val atlasEntry: AtlasEntry
 
     init {
-        val atlas = TextureAtlas(MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION)
-        textureManager.register(MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION, atlas)
+        val atlasTextureId = MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION.toNativeIdentifier()
+        val atlas = TextureAtlas(atlasTextureId)
+        textureManager.register(atlasTextureId, atlas)
         atlasEntry = AtlasEntry(atlas, config)
     }
 

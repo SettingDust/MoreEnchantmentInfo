@@ -18,6 +18,7 @@ import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
 import settingdust.more_enchantment_info.util.GuiGraphics
 import settingdust.more_enchantment_info.util.renderItem
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 import java.util.stream.Stream
 
 object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
@@ -30,7 +31,7 @@ object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
 
     override fun getUid(ingredient: Holder<Enchantment>, context: UidContext): Any = "enchantment:${ingredient.value().key}"
 
-    override fun getIdentifier(ingredient: Holder<Enchantment>) = ingredient.value().key!!
+    override fun getIdentifier(ingredient: Holder<Enchantment>) = ingredient.value().key!!.toNativeIdentifier()
 
     override fun copyIngredient(ingredient: Holder<Enchantment>) = ingredient
 

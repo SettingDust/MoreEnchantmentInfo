@@ -1,15 +1,22 @@
-package settingdust.more_enchantment_info.jei
+package settingdust.more_enchantment_info.v20.jei
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.renderer.GameRenderer
+import settingdust.more_enchantment_info.jei.DrawableSpriteAdapter as CommonDrawableSpriteAdapter
 import settingdust.more_enchantment_info.util.GuiGraphics
 import settingdust.more_enchantment_info.util.Identifier
+import settingdust.more_enchantment_info.util.MinecraftVersion
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 
-actual object DrawableSpriteAdapter {
-    actual fun render(
+class DrawableSpriteAdapter : CommonDrawableSpriteAdapter {
+    init {
+        MinecraftVersion.V1201.requireCurrent()
+    }
+
+    override fun render(
         guiGraphics: GuiGraphics,
         texture: Identifier,
         x: Int,
@@ -22,7 +29,7 @@ actual object DrawableSpriteAdapter {
         minV: Float
     ) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
-        RenderSystem.setShaderTexture(0, texture)
+        RenderSystem.setShaderTexture(0, texture.toNativeIdentifier())
 
         val tesselator = Tesselator.getInstance()
         val bufferBuilder = tesselator.builder

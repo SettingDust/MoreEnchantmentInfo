@@ -5,8 +5,11 @@ import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
 import settingdust.more_enchantment_info.util.GuiGraphics
 import settingdust.more_enchantment_info.util.Identifier
 import settingdust.more_enchantment_info.getSprite
+import settingdust.more_enchantment_info.util.ServiceLoaderUtil
 
-expect object DrawableSpriteAdapter {
+interface DrawableSpriteAdapter {
+    companion object : DrawableSpriteAdapter by ServiceLoaderUtil.findService()
+
     fun render(
         guiGraphics: GuiGraphics,
         texture: Identifier,

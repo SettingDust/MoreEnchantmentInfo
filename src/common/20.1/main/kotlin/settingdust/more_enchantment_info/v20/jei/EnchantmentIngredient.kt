@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 import java.util.stream.Stream
 
 object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
@@ -30,7 +31,7 @@ object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
     override fun getUniqueId(ingredient: Holder<Enchantment>, context: UidContext) =
         "enchantment:${ingredient.value().key}"
 
-    override fun getResourceLocation(ingredient: Holder<Enchantment>) = ingredient.value().key!!
+    override fun getResourceLocation(ingredient: Holder<Enchantment>) = ingredient.value().key!!.toNativeIdentifier()
 
     override fun copyIngredient(ingredient: Holder<Enchantment>) = ingredient
 

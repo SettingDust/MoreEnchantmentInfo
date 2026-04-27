@@ -5,6 +5,7 @@ import net.minecraft.core.HolderSet
 import net.minecraft.network.chat.Component
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.ItemTags
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites.CATEGORY_ARMOR
@@ -25,32 +26,40 @@ import settingdust.more_enchantment_info.util.EnchantmentAdapter
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.holder
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
 import settingdust.more_enchantment_info.util.Identifier
+import settingdust.more_enchantment_info.util.MinecraftVersion
 
 class EnchantmentAdapter : EnchantmentAdapter {
+
     companion object {
-        val CATEGORY_TO_TEXTURE = mapOf(
-            ItemTags.ARMOR_ENCHANTABLE to CATEGORY_ARMOR,
-            ItemTags.FOOT_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_FEET,
-            ItemTags.HEAD_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_HEAD,
-            ItemTags.LEG_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_LEGS,
-            ItemTags.CHEST_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_CHEST,
-            ItemTags.BOW_ENCHANTABLE to CATEGORY_BOW,
-            ItemTags.CROSSBOW_ENCHANTABLE to CATEGORY_CROSSBOW,
-            ItemTags.DURABILITY_ENCHANTABLE to CATEGORY_BREAKABLE,
-            ItemTags.MINING_ENCHANTABLE to CATEGORY_DIGGER,
-            ItemTags.MINING_LOOT_ENCHANTABLE to CATEGORY_DIGGER,
-            ItemTags.SHARP_WEAPON_ENCHANTABLE to CATEGORY_WEAPON,
-            ItemTags.SWEEPING_ENCHANTABLE to CATEGORY_WEAPON,
-            ItemTags.TRIDENT_ENCHANTABLE to CATEGORY_TRIDENT,
-            ItemTags.VANISHING_ENCHANTABLE to CATEGORY_VANISHABLE,
-            ItemTags.EQUIPPABLE_ENCHANTABLE to CATEGORY_WEARABLE,
-            ItemTags.WEAPON_ENCHANTABLE to CATEGORY_WEAPON,
-            ItemTags.FISHING_ENCHANTABLE to CATEGORY_FISHING_ROD,
-        )
+        val CATEGORY_TO_TEXTURE by lazy {
+            mapOf(
+                ItemTags.ARMOR_ENCHANTABLE to CATEGORY_ARMOR,
+                ItemTags.FOOT_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_FEET,
+                ItemTags.HEAD_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_HEAD,
+                ItemTags.LEG_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_LEGS,
+                ItemTags.CHEST_ARMOR_ENCHANTABLE to CATEGORY_ARMOR_CHEST,
+                ItemTags.BOW_ENCHANTABLE to CATEGORY_BOW,
+                ItemTags.CROSSBOW_ENCHANTABLE to CATEGORY_CROSSBOW,
+                ItemTags.DURABILITY_ENCHANTABLE to CATEGORY_BREAKABLE,
+                ItemTags.MINING_ENCHANTABLE to CATEGORY_DIGGER,
+                ItemTags.MINING_LOOT_ENCHANTABLE to CATEGORY_DIGGER,
+                ItemTags.SHARP_WEAPON_ENCHANTABLE to CATEGORY_WEAPON,
+                ItemTags.SWEEPING_ENCHANTABLE to CATEGORY_WEAPON,
+                ItemTags.TRIDENT_ENCHANTABLE to CATEGORY_TRIDENT,
+                ItemTags.VANISHING_ENCHANTABLE to CATEGORY_VANISHABLE,
+                ItemTags.EQUIPPABLE_ENCHANTABLE to CATEGORY_WEARABLE,
+                ItemTags.WEAPON_ENCHANTABLE to CATEGORY_WEAPON,
+                ItemTags.FISHING_ENCHANTABLE to CATEGORY_FISHING_ROD,
+            )
+        }
+    }
+
+    init {
+        MinecraftVersion.V261.requireCurrent()
     }
 
     override val Enchantment.descriptionPrefix: String
-        get() = "enchantment.${key!!.getNamespace()}.${key!!.getPath()}"
+        get() = "enchantment.${key!!.namespace}.${key!!.path}"
     override val Enchantment.name: Component
         get() = description()
 

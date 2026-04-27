@@ -12,9 +12,14 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.jei.EnchantmentJeiFactory
+import settingdust.more_enchantment_info.util.MinecraftVersion
 import kotlin.streams.toList
 
 class EnchantmentJeiFactory : EnchantmentJeiFactory {
+    init {
+        MinecraftVersion.V1211.requireCurrent()
+    }
+
     private lateinit var jeiHelpers: IJeiHelpers
     private lateinit var jeiRuntime: IJeiRuntime
 

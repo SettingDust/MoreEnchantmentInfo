@@ -1,4 +1,7 @@
 package settingdust.more_enchantment_info.util
 
-@Suppress("ACTUAL_WITHOUT_EXPECT")
-actual typealias Identifier = net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.ResourceLocation
+
+fun Identifier.toNativeIdentifier(): ResourceLocation = ResourceLocation(namespace, path)
+
+fun ResourceLocation.toCommonIdentifier(): Identifier = Identifier(namespace, path)

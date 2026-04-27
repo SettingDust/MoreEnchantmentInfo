@@ -1,10 +1,17 @@
-package settingdust.more_enchantment_info.jei
+package settingdust.more_enchantment_info.v26.jei
 
+import settingdust.more_enchantment_info.jei.DrawableSpriteAdapter as CommonDrawableSpriteAdapter
 import settingdust.more_enchantment_info.util.GuiGraphics
 import settingdust.more_enchantment_info.util.Identifier
+import settingdust.more_enchantment_info.util.MinecraftVersion
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 
-actual object DrawableSpriteAdapter {
-    actual fun render(
+class DrawableSpriteAdapter : CommonDrawableSpriteAdapter {
+    init {
+        MinecraftVersion.V261.requireCurrent()
+    }
+
+    override fun render(
         guiGraphics: GuiGraphics,
         texture: Identifier,
         x: Int,
@@ -16,6 +23,7 @@ actual object DrawableSpriteAdapter {
         maxU: Float,
         minV: Float
     ) {
-        guiGraphics.blit(texture, x, y, x + width, y + height, minU, maxU, minV, maxV)
+        guiGraphics.blit(texture.toNativeIdentifier(), x, y, x + width, y + height, minU, maxU, minV, maxV)
     }
 }
+

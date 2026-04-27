@@ -1,8 +1,10 @@
 package settingdust.more_enchantment_info.v20.util
 
-import net.minecraft.resources.ResourceLocation
 import settingdust.more_enchantment_info.util.MinecraftAdapter
+import settingdust.more_enchantment_info.util.MinecraftVersion
 
 class MinecraftAdapter : MinecraftAdapter {
-    override fun id(namespace: String, path: String) = ResourceLocation(namespace, path)
+	init {
+		MinecraftVersion.V1201.requireCurrent()
+	}
 }

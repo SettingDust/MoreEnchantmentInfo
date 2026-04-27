@@ -137,7 +137,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
                     "gui.more_enchantment_info.category",
                     Component.translatable(
                         "gui.more_enchantment_info.category.${
-                            category.getPath().removePrefix("category_")
+                            category.path.removePrefix("category_")
                         }"
                     )
                 )
@@ -149,7 +149,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
                 "gui.more_enchantment_info.rarity",
                 Component.translatable(
                     "gui.more_enchantment_info.rarity.${
-                        enchantment.raritySprite.getPath().removePrefix("rarity_")
+                        enchantment.raritySprite.path.removePrefix("rarity_")
                     }"
                 )
             )

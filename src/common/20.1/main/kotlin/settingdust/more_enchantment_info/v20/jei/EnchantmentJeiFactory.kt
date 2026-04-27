@@ -11,8 +11,13 @@ import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.jei.EnchantmentJeiFactory
+import settingdust.more_enchantment_info.util.MinecraftVersion
 
 class EnchantmentJeiFactory : EnchantmentJeiFactory {
+    init {
+        MinecraftVersion.V1201.requireCurrent()
+    }
+
     private lateinit var jeiHelpers: IJeiHelpers
     private lateinit var jeiRuntime: IJeiRuntime
 

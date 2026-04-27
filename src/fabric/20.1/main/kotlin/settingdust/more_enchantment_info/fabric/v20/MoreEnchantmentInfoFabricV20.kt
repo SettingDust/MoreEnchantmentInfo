@@ -10,6 +10,7 @@ import net.minecraft.util.profiling.ProfilerFiller
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.v20.MoreEnchantmentInfoSpriteUploader
 import settingdust.more_enchantment_info.util.Entrypoint
+import settingdust.more_enchantment_info.util.toNativeIdentifier
 import java.util.concurrent.Executor
 
 class MoreEnchantmentInfoFabricV20 : Entrypoint {
@@ -19,7 +20,7 @@ class MoreEnchantmentInfoFabricV20 : Entrypoint {
                 private val SPRITE_ID = MoreEnchantmentInfo.id("sprite_uploader")
 
                 override fun getFabricId(): ResourceLocation {
-                    return SPRITE_ID
+                    return SPRITE_ID.toNativeIdentifier()
                 }
 
                 override fun reload(

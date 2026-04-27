@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage", "INVISIBLE_REFERENCE")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.github.jengelman.gradle.plugins.shadow.transformers.DeduplicatingResourceTransformer
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.google.gson.GsonBuilder
@@ -670,12 +670,10 @@ cloche {
         minecraftVersion = "1.20.1"
 
         metadata {
-
             modLoader = "klf"
             loaderVersion {
                 start = "1"
             }
-
 
             dependency {
                 modId = "minecraft"
@@ -725,6 +723,8 @@ cloche {
     // region Main Targets - NeoForge
     val neoforgeGameCommon = common("neoforge:game:common") {
         dependsOn(commonMain)
+
+        mixins.from("src/neoforge/game/common/main/resources/more_enchantment_info.neoforge.mixins.json")
     }
 
     val neoforgeGame211 = neoforge("neoforge:game:21.1") {
@@ -744,7 +744,6 @@ cloche {
                 type = CommonMetadata.Dependency.Type.Required
                 version {
                     start = "1.21"
-                    end = "26"
                 }
             }
 
@@ -809,6 +808,10 @@ cloche {
                     )
                 }
             }
+
+            named(generateModsManifestTaskName) {
+                enabled = false
+            }
         }
     }
 
@@ -854,12 +857,12 @@ cloche {
         jar {
             mergeServiceFiles()
 
-            transform(DeduplicatingResourceTransformer::class.java)
+            transform(PreserveFirstFoundResourceTransformer::class.java)
         }
 
         dependencies {
-            embed(target(neoforgeGame211))
             embed(target(neoforgeGame261))
+            embed(target(neoforgeGame211))
         }
     }
 
