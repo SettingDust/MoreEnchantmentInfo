@@ -33,12 +33,11 @@ class JEIMoreEnchantmentInfo : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        val registry = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-        EnchantmentJeiFactory.registerRecipes(registration, registry.toList())
+        EnchantmentJeiFactory.registerRecipes(registration)
     }
 
     override fun registerIngredients(registration: IModIngredientRegistration) {
         val registry = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-        EnchantmentJeiFactory.registerIngredients(registration, registry.toSet())
+        EnchantmentJeiFactory.registerIngredients(registration)
     }
 }

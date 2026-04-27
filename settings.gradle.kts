@@ -216,6 +216,12 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
+
+        version("26.1") {
+            modVersion = "26.1.2.1"
+            loader("neoforge") { version { _, ver, l -> "$ver-$l" } }
+            loader("fabric") { version { _, ver, l -> "$ver-$l" } }
+        }
     }
 
     modrinth("bookshelf") {
@@ -232,6 +238,12 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
+
+        version("26.1") {
+            modVersion = "26.1.2.4"
+            loader("neoforge") { version { _, ver, l -> "$ver-$l" } }
+            loader("fabric") { version { _, ver, l -> "$ver-$l" } }
+        }
     }
 
     modrinth("prickle") {
@@ -241,6 +253,12 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             modVersion = "21.1.11"
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
+        }
+
+        version("26.1") {
+            modVersion = "26.1.2.2"
+            loader("neoforge") { version { _, ver, l -> "$ver-$l" } }
+            loader("fabric") { version { _, ver, l -> "$ver-$l" } }
         }
     }
 

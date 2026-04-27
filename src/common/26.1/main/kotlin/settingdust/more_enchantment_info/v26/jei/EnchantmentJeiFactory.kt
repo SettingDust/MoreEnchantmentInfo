@@ -7,15 +7,20 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.runtime.IJeiRuntime
 import net.minecraft.client.Minecraft
+import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.jei.EnchantmentJeiFactory
-import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.registryOrThrow
+import kotlin.streams.toList
 
 class EnchantmentJeiFactory : EnchantmentJeiFactory {
     private lateinit var jeiHelpers: IJeiHelpers
     private lateinit var jeiRuntime: IJeiRuntime
+
+    private val registry by lazy {
+        Minecraft.getInstance().level!!.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+    }
 
     override fun onRuntimeAvailable(jeiRuntime: IJeiRuntime, jeiHelpers: IJeiHelpers) {
         this.jeiRuntime = jeiRuntime
@@ -26,26 +31,22 @@ class EnchantmentJeiFactory : EnchantmentJeiFactory {
         registration.addRecipeCategories(EnchantmentRecipeCategory(registration.jeiHelpers.guiHelper))
     }
 
-    override fun registerRecipes(registration: IRecipeRegistration, enchantments: Collection<Enchantment>) {
-        registration.addRecipes(EnchantmentRecipeCategory.TYPE, enchantments.toList())
+    override fun registerRecipes(registration: IRecipeRegistration) {
+        registration.addRecipes(EnchantmentRecipeCategory.TYPE, registry.listElements().toList() as List<Holder<Enchantment>>)
     }
 
-    override fun registerIngredients(registration: IModIngredientRegistration, enchantments: Collection<Enchantment>) {
-        val registry = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-        val codec = Identifier.CODEC.xmap(
-            { id -> requireNotNull(registry.getValue(id)) { "Unknown enchantment id: $id" } },
-            { enchantment -> registry.getKey(enchantment)!! }
-        )
+    override fun registerIngredients(registration: IModIngredientRegistration) {
+        val codec = registry.holderByNameCodec()
         registration.register(
             EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT,
-            enchantments.toSet(),
+            registry.listElements().toList() as List<Holder<Enchantment>>,
             EnchantmentIngredientHelper,
             EnchantmentIngredientRenderer,
             codec
         )
     }
 
-    override fun viewEnchantment(enchantment: Enchantment) {
+    override fun viewEnchantment(enchantment: Holder<Enchantment>) {
         val focus = jeiHelpers.focusFactory.createFocus(
             RecipeIngredientRole.INPUT,
             EnchantmentIngredientHelper.ENCHANTMENT_INGREDIENT,

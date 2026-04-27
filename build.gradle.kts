@@ -19,7 +19,6 @@ import earth.terrarium.cloche.api.target.*
 import earth.terrarium.cloche.api.target.compilation.ClocheDependencyHandler
 import earth.terrarium.cloche.target.LazyConfigurableInternal
 import earth.terrarium.cloche.tasks.GenerateFabricModJson
-import earth.terrarium.cloche.tasks.GenerateForgeModsToml
 import earth.terrarium.cloche.util.fromJars
 import earth.terrarium.cloche.util.target
 import groovy.lang.Closure
@@ -31,7 +30,6 @@ import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 
 plugins {
@@ -502,6 +500,7 @@ cloche {
         dependsOn(commonMain)
         // mixins.from("src/common/20.1/main/resources/$id.20_1.mixins.json")
     }
+
     val common211 = common("common:21.1") {
         dependsOn(commonMain)
         // mixins.from("src/common/21.1/main/resources/$id.21_1.mixins.json")
@@ -630,6 +629,7 @@ cloche {
                 type = CommonMetadata.Dependency.Type.Required
                 version {
                     start = "1.21"
+                    end = "26"
                 }
             }
         }
@@ -722,15 +722,16 @@ cloche {
     // endregion
 
     // region Main Targets - NeoForge
+    val neoforgeGameCommon = common("neoforge:game:common") {
+        dependsOn(commonMain)
+    }
 
-
-    val neoforgeGame = neoforge("neoforge:game") {
-        dependsOn(common211)
+    val neoforgeGame211 = neoforge("neoforge:game:21.1") {
+        dependsOn(common211, neoforgeGameCommon)
 
         minecraftVersion = "1.21.1"
 
         metadata {
-
             modLoader = "klf"
             loaderVersion {
                 start = "1"
@@ -769,7 +770,7 @@ cloche {
     }
 
     val neoforgeGame261 = neoforge("neoforge:game:26.1") {
-        dependsOn(common261)
+        dependsOn(common261, neoforgeGameCommon)
 
         minecraftVersion = "26.1.2"
 
@@ -879,7 +880,7 @@ cloche {
 
             modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.fabric)
             modRuntimeOnly(catalog.bookshelf.mc1211.fabric)
-            modRuntimeOnly(catalog.prickle.fabric)
+            modRuntimeOnly(catalog.prickle.mc1211.fabric)
         }
     }
 
@@ -890,6 +891,14 @@ cloche {
 
         dependencies {
             runtimeOnly(container(fabricContainer))
+
+            modRuntimeOnly(catalog.fabric.language.kotlin)
+
+            modRuntimeOnly(catalog.jei.mc2612.fabric)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc261.fabric)
+            modRuntimeOnly(catalog.bookshelf.mc261.fabric)
+            modRuntimeOnly(catalog.prickle.mc261.fabric)
         }
     }
 
@@ -933,7 +942,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(target(neoforgeGame))
+            runtimeOnly(target(neoforgeGame211))
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc21.neoforge)
@@ -942,7 +951,7 @@ cloche {
 
             modRuntimeOnly(catalog.enchantmentDescriptions.mc1211.neoforge)
             modRuntimeOnly(catalog.bookshelf.mc1211.neoforge)
-            modRuntimeOnly(catalog.prickle.neoforge)
+            modRuntimeOnly(catalog.prickle.mc1211.neoforge)
         }
     }
 
@@ -957,6 +966,15 @@ cloche {
 
         dependencies {
             runtimeOnly(target(neoforgeGame261))
+            runtimeOnly(catalog.preloadingTricks)
+
+            modRuntimeOnly(catalog.klf.mc26.neoforge)
+
+            modRuntimeOnly(catalog.jei.mc2612.neoforge)
+
+            modRuntimeOnly(catalog.enchantmentDescriptions.mc261.neoforge)
+            modRuntimeOnly(catalog.bookshelf.mc261.neoforge)
+            modRuntimeOnly(catalog.prickle.mc261.neoforge)
         }
     }
 
@@ -1063,7 +1081,7 @@ tasks {
         from(forgeJar.map { zipTree(it.archiveFile) })
         manifest.from(forgeJar.get().manifest)
 
-        val neoforge21Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame", "includeJar"))
+        val neoforge21Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame211", "includeJar"))
         from(neoforge21Jar.map { zipTree(it.archiveFile) })
         manifest.from(neoforge21Jar.get().manifest)
 

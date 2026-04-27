@@ -5,6 +5,7 @@ import mezz.jei.api.registration.IModIngredientRegistration
 import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.runtime.IJeiRuntime
+import net.minecraft.core.Holder
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.util.ServiceLoaderUtil
 
@@ -15,9 +16,9 @@ interface EnchantmentJeiFactory {
 
     fun registerCategories(registration: IRecipeCategoryRegistration)
 
-    fun registerRecipes(registration: IRecipeRegistration, enchantments: Collection<Enchantment>)
+    fun registerRecipes(registration: IRecipeRegistration)
 
-    fun registerIngredients(registration: IModIngredientRegistration, enchantments: Collection<Enchantment>)
+    fun registerIngredients(registration: IModIngredientRegistration)
 
-    fun viewEnchantment(enchantment: Enchantment)
+    fun viewEnchantment(enchantment: Holder<Enchantment>)
 }
