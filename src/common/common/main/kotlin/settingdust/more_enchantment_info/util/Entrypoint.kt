@@ -2,7 +2,7 @@ package settingdust.more_enchantment_info.util
 
 interface Entrypoint {
     companion object : Entrypoint {
-        private val services by lazy { ServiceLoaderUtil.findServices<Entrypoint>(required = false) }
+        private val services by lazy { ServiceLoaderUtil.findServices<Entrypoint>(required = false).toList() }
 
         override fun construct() {
             services.forEach { it.construct() }

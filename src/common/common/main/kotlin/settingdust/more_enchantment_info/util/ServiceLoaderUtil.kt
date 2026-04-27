@@ -37,7 +37,7 @@ object ServiceLoaderUtil {
             } catch (t: Throwable) {
                 val e = IllegalStateException("${prefix}Loading $providerName failed", t)
                 errors.add(e)
-                logger.debug(e)
+                logger.debug("${prefix}Loading $providerName failed", t)
             }
 
             current = findNext<T>(iterator, errors)

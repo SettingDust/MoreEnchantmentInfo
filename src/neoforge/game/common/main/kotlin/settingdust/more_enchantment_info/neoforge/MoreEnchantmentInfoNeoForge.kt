@@ -1,12 +1,10 @@
-package settingdust.more_enchantment_info.neoforge.v26
+package settingdust.more_enchantment_info.neoforge
 
 import dev.nyon.klf.MOD_BUS
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
-import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
-import settingdust.more_enchantment_info.neoforge.util.NeoForgeAdapter
 import settingdust.more_enchantment_info.util.Entrypoint
 
 @Mod(MoreEnchantmentInfo.ID)
@@ -20,9 +18,6 @@ object MoreEnchantmentInfoNeoForge {
             }
             addListener<FMLClientSetupEvent> {
                 Entrypoint.clientInit()
-            }
-            addListener<AddClientReloadListenersEvent> { event ->
-                event.addListener(MoreEnchantmentInfo.id("sprites"), NeoForgeAdapter.createReloadListener())
             }
         }
     }

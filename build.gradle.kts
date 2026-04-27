@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage", "INVISIBLE_REFERENCE")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.DeduplicatingResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.google.gson.GsonBuilder
@@ -168,7 +169,7 @@ class ContainerScope(
 
     private val embedConfigurations = mutableMapOf<String, NamedDomainObjectProvider<Configuration>>()
 
-    val jarTask = project.tasks.register<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
+    val jarTask = project.tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "jar")) {
         group = "build"
         archiveClassifier = loader.toString().lowercase()
         destinationDirectory = intermediateOutputsDirectory
@@ -396,7 +397,7 @@ class ContainerScope(
         DependenciesScope(project.dependencies).block()
     }
 
-    fun jar(block: Jar.() -> Unit) {
+    fun jar(block: ShadowJar.() -> Unit) {
         jarTask.configure(block)
     }
 }
@@ -845,6 +846,25 @@ cloche {
 
     // endregion
 
+    // region NeoForge Container
+
+    val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
+        embed()
+
+        jar {
+            mergeServiceFiles()
+
+            transform(DeduplicatingResourceTransformer::class.java)
+        }
+
+        dependencies {
+            embed(target(neoforgeGame211))
+            embed(target(neoforgeGame261))
+        }
+    }
+
+    // endregion
+
     // region Version Targets
 
     // region Fabric Version Targets
@@ -942,7 +962,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(target(neoforgeGame211))
+            runtimeOnly(container(neoforgeContainer))
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc21.neoforge)
@@ -965,7 +985,7 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(target(neoforgeGame261))
+            runtimeOnly(container(neoforgeContainer))
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc26.neoforge)
@@ -1081,13 +1101,9 @@ tasks {
         from(forgeJar.map { zipTree(it.archiveFile) })
         manifest.from(forgeJar.get().manifest)
 
-        val neoforge21Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame211", "includeJar"))
-        from(neoforge21Jar.map { zipTree(it.archiveFile) })
-        manifest.from(neoforge21Jar.get().manifest)
-
-        val neoforge26Jar = project.tasks.named<Jar>(lowerCamelCaseGradleName("neoforgeGame261", "includeJar"))
-        from(neoforge26Jar.map { zipTree(it.archiveFile) })
-        manifest.from(neoforge26Jar.get().manifest)
+        val neoforgeJar = project.tasks.named<Jar>(lowerCamelCaseGradleName("containerNeoforge", "includeJar"))
+        from(neoforgeJar.map { zipTree(it.archiveFile) })
+        manifest.from(neoforgeJar.get().manifest)
 
         mergeServiceFiles()
         append("META-INF/accesstransformer.cfg")
