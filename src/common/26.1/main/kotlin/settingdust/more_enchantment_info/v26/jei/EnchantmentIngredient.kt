@@ -16,8 +16,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.holder
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
-import settingdust.more_enchantment_info.util.GuiGraphics
-import settingdust.more_enchantment_info.util.renderItem
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import settingdust.more_enchantment_info.util.toNativeIdentifier
 import java.util.stream.Stream
 
@@ -45,8 +44,8 @@ object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
 }
 
 object EnchantmentIngredientRenderer : IIngredientRenderer<Holder<Enchantment>> {
-    override fun render(guiGraphics: GuiGraphics, ingredient: Holder<Enchantment>) {
-        guiGraphics.renderItem(EnchantmentIngredientHelper.getCheatItemStack(ingredient), 0, 0)
+    override fun render(guiGraphics: GuiGraphicsExtractor, ingredient: Holder<Enchantment>) {
+        guiGraphics.item(EnchantmentIngredientHelper.getCheatItemStack(ingredient), 0, 0)
     }
 
     override fun getTooltip(ingredient: Holder<Enchantment>, tooltipFlag: TooltipFlag) =
