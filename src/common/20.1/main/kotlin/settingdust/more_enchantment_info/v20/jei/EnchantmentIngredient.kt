@@ -17,7 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.key
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v20.util.toNativeIdentifier
 import java.util.stream.Stream
 
 object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {

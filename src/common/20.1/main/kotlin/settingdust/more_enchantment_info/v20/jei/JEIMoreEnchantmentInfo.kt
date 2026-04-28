@@ -8,7 +8,7 @@ import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.runtime.IJeiRuntime
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.util.MinecraftVersion
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v20.util.toNativeIdentifier
 
 @JeiPlugin
 class JEIMoreEnchantmentInfo : IModPlugin {

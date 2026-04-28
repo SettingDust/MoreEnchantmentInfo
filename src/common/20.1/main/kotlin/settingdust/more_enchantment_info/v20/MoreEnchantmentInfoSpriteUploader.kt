@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.TextureAtlasHolder
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.util.Identifier
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v20.util.toNativeIdentifier
 
 object MoreEnchantmentInfoSpriteUploader : TextureAtlasHolder(
     Minecraft.getInstance().textureManager,
