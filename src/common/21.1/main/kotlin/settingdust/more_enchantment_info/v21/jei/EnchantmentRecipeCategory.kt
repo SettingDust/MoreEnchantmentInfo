@@ -24,7 +24,7 @@ import org.joml.Vector4i
 import org.joml.Vector4ic
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
-import settingdust.more_enchantment_info.jei.DrawableSprite
+import settingdust.more_enchantment_info.v21.jei.DrawableSpriteDrawable
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.description
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCompatibleWith
@@ -135,7 +135,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
         }
 
         for (category in enchantment.supportedCategories) {
-            builder.addProperty(DrawableSprite(category, 8, 8, 1, 1, 1, 1)) {
+            builder.addProperty(DrawableSpriteDrawable(category, 8, 8, 1, 1, 1, 1)) {
                 Component.translatable(
                     "gui.more_enchantment_info.category",
                     Component.translatable(
@@ -147,7 +147,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             }
         }
 
-        builder.addProperty(DrawableSprite(enchantment.raritySprite, 8, 8, 1, 1, 1, 1)) {
+        builder.addProperty(DrawableSpriteDrawable(enchantment.raritySprite, 8, 8, 1, 1, 1, 1)) {
             Component.translatable(
                 "gui.more_enchantment_info.rarity",
                 Component.translatable(
@@ -159,7 +159,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
         }
 
         if (enchantment.isLootable) builder.addProperty(
-            DrawableSprite(
+            DrawableSpriteDrawable(
                 MoreEnchantmentInfoSprites.DISCOVERABLE,
                 8,
                 8,
@@ -170,7 +170,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             )
         ) { Component.translatable("gui.more_enchantment_info.discoverable") }
         if (enchantment.isInTable) builder.addProperty(
-            DrawableSprite(
+            DrawableSpriteDrawable(
                 MoreEnchantmentInfoSprites.ENCHANTABLE,
                 8,
                 8,
@@ -181,7 +181,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             )
         ) { Component.translatable("gui.more_enchantment_info.enchantable") }
         if (enchantment.isTradeable) builder.addProperty(
-            DrawableSprite(
+            DrawableSpriteDrawable(
                 MoreEnchantmentInfoSprites.TRADEABLE,
                 8,
                 8,
@@ -192,7 +192,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             )
         ) { Component.translatable("gui.more_enchantment_info.tradeable") }
         if (enchantment.isTreasure) builder.addProperty(
-            DrawableSprite(
+            DrawableSpriteDrawable(
                 MoreEnchantmentInfoSprites.TREASURE,
                 8,
                 8,
@@ -203,7 +203,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             )
         ) { Component.translatable("gui.more_enchantment_info.treasure") }
         if (enchantment.isCurse) builder.addProperty(
-            DrawableSprite(
+            DrawableSpriteDrawable(
                 MoreEnchantmentInfoSprites.CURSE,
                 8,
                 8,
