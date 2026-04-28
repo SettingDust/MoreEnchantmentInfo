@@ -1,81 +1,52 @@
 package settingdust.more_enchantment_info.jei
 
-import settingdust.more_enchantment_info.MoreEnchantmentInfo
-import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
-import settingdust.more_enchantment_info.util.GuiGraphics
 import settingdust.more_enchantment_info.util.Identifier
-import settingdust.more_enchantment_info.getSprite
-import settingdust.more_enchantment_info.util.ServiceLoaderUtil
 
-interface DrawableSpriteAdapter {
-    companion object : DrawableSpriteAdapter by ServiceLoaderUtil.findService()
-
-    fun render(
-        guiGraphics: GuiGraphics,
-        texture: Identifier,
-        x: Int,
-        y: Int,
-        height: Int,
-        minU: Float,
-        maxV: Float,
-        width: Int,
-        maxU: Float,
-        minV: Float
-    )
-}
+data class SpriteRenderData(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+    val minU: Float,
+    val maxU: Float,
+    val minV: Float,
+    val maxV: Float,
+)
 
 class DrawableSprite(
-    private val location: Identifier,
-    private val width: Int,
-    private val height: Int,
-    private val paddingTop: Int = 0,
-    private val paddingBottom: Int = 0,
-    private val paddingLeft: Int = 0,
-    private val paddingRight: Int = 0
-) : IDrawableStatic {
-    override fun draw(
-        guiGraphics: GuiGraphics,
+    val location: Identifier,
+    val width: Int,
+    val height: Int,
+    val paddingTop: Int = 0,
+    val paddingBottom: Int = 0,
+    val paddingLeft: Int = 0,
+    val paddingRight: Int = 0,
+) {
+    val displayWidth = width + paddingLeft + paddingRight
+    val displayHeight = height + paddingTop + paddingBottom
+
+    fun computeRenderData(
         xOffset: Int,
         yOffset: Int,
-        maskTop: Int,
-        maskBottom: Int,
-        maskLeft: Int,
-        maskRight: Int
-    ) {
-        val sprite = MoreEnchantmentInfoSprites.getSprite(location) ?: error("Sprite $location not found")
-        val textureWidth = width
-        val textureHeight = height
-
+        maskTop: Int = 0,
+        maskBottom: Int = 0,
+        maskLeft: Int = 0,
+        maskRight: Int = 0,
+        u0: Float,
+        u1: Float,
+        v0: Float,
+        v1: Float,
+    ): SpriteRenderData {
         val x = xOffset + maskLeft + paddingLeft
         val y = yOffset + maskTop + paddingTop
-        val width = width - maskRight - maskLeft
-        val height = height - maskBottom - maskTop
-        val uSize = sprite.u1 - sprite.u0
-        val vSize = sprite.v1 - sprite.v0
-
-        val minU = sprite.u0 + uSize * (maskLeft / textureWidth.toFloat())
-        val minV = sprite.v0 + vSize * (maskTop / textureHeight.toFloat())
-        val maxU = sprite.u1 - uSize * (maskRight / textureWidth.toFloat())
-        val maxV = sprite.v1 - vSize * (maskBottom / textureHeight.toFloat())
-
-        DrawableSpriteAdapter.render(
-            guiGraphics,
-            MoreEnchantmentInfo.TEXTURE_ATLAS_LOCATION,
-            x,
-            y,
-            height,
-            minU,
-            maxV,
-            width,
-            maxU,
-            minV
-        )
+        val w = width - maskRight - maskLeft
+        val h = height - maskBottom - maskTop
+        val uSize = u1 - u0
+        val vSize = v1 - v0
+        val minU = u0 + uSize * (maskLeft / width.toFloat())
+        val minV = v0 + vSize * (maskTop / height.toFloat())
+        val maxU = u1 - uSize * (maskRight / width.toFloat())
+        val maxV = v1 - vSize * (maskBottom / height.toFloat())
+        return SpriteRenderData(x, y, w, h, minU, maxU, minV, maxV)
     }
-
-    override fun getWidth() = width + paddingLeft + paddingRight
-
-    override fun getHeight() = height + paddingTop + paddingBottom
-
-    override fun draw(guiGraphics: GuiGraphics, xOffset: Int, yOffset: Int) =
-        draw(guiGraphics, xOffset, yOffset, 0, 0, 0, 0)
 }
