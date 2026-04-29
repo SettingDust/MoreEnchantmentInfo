@@ -535,7 +535,7 @@ cloche {
     // region Shared Target Defaults
 
     targets.withType<FabricTarget> {
-        loaderVersion = "0.18.6"
+        loaderVersion = "0.19.2"
 
         includedClient()
 
@@ -1320,13 +1320,13 @@ fun String.parchmentVersion(): String? = when (this) {
 }
 
 fun String.forgeLoaderVersion(): String? = when (this) {
-    "1.20.1" -> "47.4.4"
+    "1.20.1" -> "47.4.20"
     else -> null
 }
 
 fun String.neoForgeLoaderVersion(): String? = when (this) {
-    "1.21.1" -> "21.1.192"
-    "26.1.2" -> "26.1.2.7-beta"
+    "1.21.1" -> "21.1.228"
+    "26.1.2" -> "26.1.2.30-beta"
     else -> null
 }
 

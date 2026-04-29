@@ -143,13 +143,13 @@ fun VersionCatalogBuilder.modrinth(id: String, block: MultiVersionDepBuilder.() 
 
 dependencyResolutionManagement.versionCatalogs.create("catalog") {
     library("mixin-fabric", "net.fabricmc", "sponge-mixin")
-        .version("0.17.0+mixin.0.8.7")
+        .version("0.17.3+mixin.0.8.7")
 
     dependency("mixinextras", "io.github.llamalad7") {
         artifact = "mixinextras"
 
         version("*") {
-            modVersion = "0.5.0"
+            modVersion = "0.5.4"
             loader("forge") { artifact(ArtifactFormatter.dashLoader) }
             loader("fabric") { artifact(ArtifactFormatter.dashLoader) }
             loader("common") { artifact(ArtifactFormatter.dashLoader) }
@@ -162,7 +162,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
 
     dependency("klf", "dev.nyon") {
         artifact = "KotlinLangForge"
-        versionFormat = { _, ver -> "2.11.2-k2.3.20-$ver" }
+        versionFormat = { _, ver -> "2.11.2-k2.3.21-$ver" }
 
         version("20") {
             modVersion = "2.0"
@@ -206,7 +206,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         artifact = "enchantment-descriptions"
 
         version("1.20.1") {
-            modVersion = "17.1.19"
+            modVersion = "17.1.21"
             loader("forge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
@@ -228,13 +228,13 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         artifact = "bookshelf-lib"
 
         version("1.20.1") {
-            modVersion = "20.2.13"
+            modVersion = "20.2.15"
             loader("forge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
 
         version("1.21.1") {
-            modVersion = "21.1.69"
+            modVersion = "21.1.81"
             loader("neoforge") { version { mc, ver, l -> "$ver-$l,$mc" } }
             loader("fabric") { version { mc, ver, l -> "$ver-$l,$mc" } }
         }
@@ -262,7 +262,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
     }
 
-    library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.10+kotlin.2.3.20")
+    library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.11+kotlin.2.3.21")
 }
 
 // #endregion
