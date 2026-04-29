@@ -9,6 +9,8 @@ import settingdust.more_enchantment_info.util.MinecraftVersion
 class MoreEnchantmentInfoNeoForgeEntrypoint : Entrypoint {
     init {
         MinecraftVersion.V1211.requireCurrent()
+        @Suppress("RedundantRequireNotNullCall")
+        requireNotNull(MOD_BUS)
     }
 
     override fun construct() {

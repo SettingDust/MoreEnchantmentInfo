@@ -11,6 +11,8 @@ import settingdust.more_enchantment_info.v26.util.toNativeIdentifier
 class MoreEnchantmentInfoNeoForgeEntrypoint : Entrypoint {
     init {
         MinecraftVersion.V261.requireCurrent()
+        @Suppress("RedundantRequireNotNullCall")
+        requireNotNull(MOD_BUS)
     }
 
     override fun construct() {
