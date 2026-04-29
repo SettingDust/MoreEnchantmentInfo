@@ -25,7 +25,6 @@ import org.joml.Vector4i
 import org.joml.Vector4ic
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
-import settingdust.more_enchantment_info.v26.jei.DrawableSpriteDrawable
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.description
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCompatibleWith
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCurse
@@ -36,7 +35,8 @@ import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isTre
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.raritySprite
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.supportedCategories
-import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.registryOrThrow
+import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getRegistry
+import kotlin.jvm.optionals.getOrNull
 
 class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<Holder<Enchantment>> {
     companion object {
@@ -61,6 +61,8 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
     override fun getIcon() = guiHelper.createDrawableItemLike(Items.ENCHANTED_BOOK)
     override fun getWidth() = 144
     override fun getHeight() = BASE_HEIGHT
+
+    override fun getIdentifier(recipe: Holder<Enchantment>) = recipe.unwrapKey().getOrNull()?.identifier()
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: Holder<Enchantment>, focuses: IFocusGroup) {
         val enchantment = recipe.value()
@@ -88,7 +90,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
             .add(applicable)
             .setStandardSlotBackground()
 
-        val conflicts = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+        val conflicts = Minecraft.getInstance().level!!.registryAccess().getRegistry(Registries.ENCHANTMENT)
             .listElements()
             .filter { it.value() != enchantment && !it.value().isCompatibleWith(enchantment) }
             .toList() as List<Holder<Enchantment>>
