@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.GameRenderer
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.jei.DrawableSprite
 import settingdust.more_enchantment_info.util.Identifier
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v21.util.toNativeIdentifier
 import settingdust.more_enchantment_info.v21.MoreEnchantmentInfoSpriteUploader
 
 class DrawableSpriteDrawable(

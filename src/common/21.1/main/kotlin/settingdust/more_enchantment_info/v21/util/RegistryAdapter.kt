@@ -5,7 +5,6 @@ import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceKey
 import settingdust.more_enchantment_info.util.MinecraftVersion
 import settingdust.more_enchantment_info.util.RegistryAdapter
-import settingdust.more_enchantment_info.util.toCommonIdentifier
 import kotlin.jvm.optionals.getOrNull
 
 class RegistryAdapter : RegistryAdapter {
