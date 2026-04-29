@@ -892,7 +892,7 @@ cloche {
         runs { client() }
 
         dependencies {
-            runtimeOnly(project(":")) {
+            modRuntimeOnly(project(":")) {
                 isTransitive = false
             }
 
@@ -911,7 +911,9 @@ cloche {
         runs { client() }
 
         dependencies {
-            runtimeOnly(container(fabricContainer))
+            modRuntimeOnly(project(":")) {
+                isTransitive = false
+            }
 
             modRuntimeOnly(catalog.fabric.language.kotlin)
 
@@ -929,7 +931,9 @@ cloche {
         runs { client() }
 
         dependencies {
-            runtimeOnly(container(fabricContainer))
+            modRuntimeOnly(project(":")) {
+                isTransitive = false
+            }
 
             modRuntimeOnly(catalog.fabric.language.kotlin)
 
@@ -955,7 +959,10 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(target(forgeGame))
+            modRuntimeOnly(project(":")) {
+                isTransitive = false
+            }
+
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc20.forge)
@@ -981,7 +988,10 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(container(neoforgeContainer))
+            modRuntimeOnly(project(":")) {
+                isTransitive = false
+            }
+
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc21.neoforge)
@@ -1004,7 +1014,10 @@ cloche {
         }
 
         dependencies {
-            runtimeOnly(container(neoforgeContainer))
+            modRuntimeOnly(project(":")) {
+                isTransitive = false
+            }
+
             runtimeOnly(catalog.preloadingTricks)
 
             modRuntimeOnly(catalog.klf.mc26.neoforge)
@@ -1074,7 +1087,10 @@ cloche {
             configurations = emptyList()
 
             from(project.zipTree(fabricContainer.includeDevJarTask.flatMap { it.archiveFile }))
-            from(project.zipTree(project.tasks.named(forgeGame.jarTaskName, Jar::class.java).flatMap { it.archiveFile }))
+            from(
+                project.zipTree(
+                    project.tasks.named(forgeGame.jarTaskName, Jar::class.java).flatMap { it.archiveFile })
+            )
             from(project.zipTree(neoforgeContainer.includeDevJarTask.flatMap { it.archiveFile }))
 
             mergeServiceFiles()
@@ -1085,12 +1101,14 @@ cloche {
         }
 
         val shadowMergedJar by registering(ShadowJar::class) {
-            dependsOn(shadowMergedDevJar)
             archiveClassifier = ""
             configurations = emptyList()
 
             from(project.zipTree(fabricContainer.includeJarTask.flatMap { it.archiveFile }))
-            from(project.zipTree(project.tasks.named(forgeGame.includeJarTaskName, Jar::class.java).flatMap { it.archiveFile }))
+            from(
+                project.zipTree(
+                    project.tasks.named(forgeGame.includeJarTaskName, Jar::class.java).flatMap { it.archiveFile })
+            )
             from(project.zipTree(neoforgeContainer.includeJarTask.flatMap { it.archiveFile }))
 
             mergeServiceFiles()
@@ -1115,12 +1133,11 @@ cloche {
         }
 
         build {
-            dependsOn(shadowMergedJar, shadowSourcesJar)
+            dependsOn(shadowMergedDevJar, shadowMergedJar, shadowSourcesJar)
         }
 
         jar {
-            finalizedBy(shadowMergedJar)
-            destinationDirectory = shadowMergedJar.flatMap { it.destinationDirectory }
+            enabled = false
         }
 
         afterEvaluate {
@@ -1135,8 +1152,12 @@ cloche {
                     }
 
                     runtimeElements {
-                        // Cloche skips common runtimeElements by default for common compilations.
-                        // Re-add it so apiElements has a corresponding runtime variant for the final single jar.
+                        // Replace the default jar artifact with shadowMergedJar so that
+                        // run configs that resolve runtimeElements properly depend on shadowMergedJar.
+                        outgoing.artifacts.clear()
+                        outgoing.artifact(shadowMergedJar)
+
+                        // Re-add the dev (remapped=true) variant pointing to shadowMergedDevJar.
                         outgoing.variants.create("remapped") {
                             attributes {
                                 attribute(REMAPPED_ATTRIBUTE, true)
