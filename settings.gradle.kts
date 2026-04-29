@@ -157,7 +157,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     }
 
     library("preloadingTricks", "settingdust.preloading_tricks", "PreloadingTricks")
-        .version("3.4.6")
+        .version("3.5.10-3-g4c663c2")
 
 
     dependency("klf", "dev.nyon") {

@@ -27,6 +27,7 @@ import groovy.lang.Closure
 import net.msrandom.minecraftcodev.core.utils.lowerCamelCaseGradleName
 import net.msrandom.minecraftcodev.fabric.task.JarInJar
 import net.msrandom.minecraftcodev.forge.task.JarJar
+import net.msrandom.minecraftcodev.includes.IncludesJar
 import net.msrandom.minecraftcodev.runs.MinecraftRunConfiguration
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
@@ -43,7 +44,7 @@ plugins {
 
     id("com.palantir.git-version") version "5.0.0"
     id("com.gradleup.shadow") version "9.4.1"
-    id("earth.terrarium.cloche") version "0.18.11-dust.7"
+    id("earth.terrarium.cloche") version "0.18.11-dust.8"
 }
 
 // region Project Properties
@@ -176,9 +177,9 @@ class ContainerScope(
         destinationDirectory = intermediateOutputsDirectory
     }
 
-    val includeJarTask: TaskProvider<out Jar> =
+    val includeJarTask: TaskProvider<out IncludesJar> =
         createPackageTask("includeJar", includeConfigurationProvider)
-    val includeDevJarTask: TaskProvider<out Jar> =
+    val includeDevJarTask: TaskProvider<out IncludesJar> =
         createPackageTask(
             "includesDevJar",
             includeDevConfigurationProvider,
@@ -232,7 +233,7 @@ class ContainerScope(
         configuration: NamedDomainObjectProvider<Configuration>,
         archiveClassifier: String = loader.toString().lowercase(),
         toIntermediateOutputs: Boolean = false,
-    ): TaskProvider<out Jar> = when (loader) {
+    ): TaskProvider<out IncludesJar> = when (loader) {
         MinecraftModLoader.fabric -> project.tasks.register<JarInJar>(lowerCamelCaseGradleName(featureName, name)) {
             group = "build"
             this.archiveClassifier = archiveClassifier
@@ -539,7 +540,6 @@ cloche {
         includedClient()
 
         metadata {
-
             entrypoint("main") {
                 adapter = "kotlin"
                 value = "$group.fabric.MoreEnchantmentInfoFabric::init"
@@ -548,11 +548,6 @@ cloche {
             entrypoint("client") {
                 adapter = "kotlin"
                 value = "$group.fabric.MoreEnchantmentInfoFabric::clientInit"
-            }
-
-            entrypoint("jei_mod_plugin") {
-                adapter = "kotlin"
-                value = "$group.jei.JEIMoreEnchantmentInfo"
             }
 
             dependency {
@@ -617,6 +612,11 @@ cloche {
         minecraftVersion = "1.20.1"
 
         metadata {
+            entrypoint("jei_mod_plugin") {
+                adapter = "kotlin"
+                value = "$group.v20.jei.JEIMoreEnchantmentInfo"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -638,6 +638,11 @@ cloche {
         minecraftVersion = "1.21.1"
 
         metadata {
+            entrypoint("jei_mod_plugin") {
+                adapter = "kotlin"
+                value = "$group.v21.jei.JEIMoreEnchantmentInfo"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -659,6 +664,11 @@ cloche {
         minecraftVersion = "26.1.2"
 
         metadata {
+            entrypoint("jei_mod_plugin") {
+                adapter = "kotlin"
+                value = "$group.v26.jei.JEIMoreEnchantmentInfo"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -681,6 +691,8 @@ cloche {
         dependsOn(common201)
 
         minecraftVersion = "1.20.1"
+
+        mixins.from("src/forge/game/main/resources/$id.forge.mixins.json")
 
         metadata {
             modLoader = "klf"
@@ -737,7 +749,7 @@ cloche {
     val neoforgeGameCommon = common("neoforge:game:common") {
         dependsOn(commonMain)
 
-        mixins.from("src/neoforge/game/common/main/resources/more_enchantment_info.neoforge.mixins.json")
+        mixins.from("src/neoforge/game/common/main/resources/$id.neoforge.mixins.json")
     }
 
     val neoforgeGame211 = neoforge("neoforge:game:21.1") {
@@ -848,9 +860,9 @@ cloche {
             }
 
         dependencies {
-            includeTarget(fabric201)
-            includeTarget(fabric211)
             includeTarget(fabric261)
+            includeTarget(fabric211)
+            includeTarget(fabric201)
         }
 
         jar {
@@ -863,18 +875,109 @@ cloche {
 
     // region NeoForge Container
 
-    val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
-        embed()
+    val forgeContainer = container(loader = MinecraftModLoader.forge) {
+        dependencies {
+            includeTarget(forgeGame)
+        }
 
         jar {
-            mergeServiceFiles()
+            manifest {
+                attributes(
+                    "FMLModType" to "GAMELIBRARY"
+                )
+            }
+        }
+    }
 
+    // endregion
+
+    // region NeoForge Container
+
+    val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
+        val neoforgeMergedJar = tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedJar")) {
+            group = "build"
+            archiveClassifier = "${loader.toString().lowercase()}-merged"
+            destinationDirectory = intermediateOutputsDirectory
+            configurations = emptyList()
+
+            for (target in listOf(neoforgeGame261,neoforgeGame211)) {
+                val output = tasks.named<Jar>(target.includeJarTaskName).flatMap { it.archiveFile }
+                from(project.zipTree(output))
+
+                manifest.fromJars(serviceOf(), output)
+            }
+
+            mergeServiceFiles()
+            append("META-INF/accesstransformer.cfg")
             transform(PreserveFirstFoundResourceTransformer::class.java)
         }
 
+        val neoforgeMergedDevJar = tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedDevJar")) {
+            group = "build"
+            archiveClassifier = "${loader.toString().lowercase()}-merged-dev"
+            destinationDirectory = intermediateOutputsDirectory
+            configurations = emptyList()
+
+            for (target in listOf(neoforgeGame261,neoforgeGame211)) {
+                val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
+                from(project.zipTree(output))
+
+                manifest.fromJars(serviceOf(), output)
+            }
+
+            mergeServiceFiles()
+            append("META-INF/accesstransformer.cfg")
+            transform(PreserveFirstFoundResourceTransformer::class.java)
+        }
+
+        val mergedRuntimeElements =
+            configurations.register(lowerCamelCaseGradleName(featureName, "mergedRuntimeElements")) {
+                isCanBeResolved = false
+                isCanBeConsumed = true
+
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                    attribute(TargetAttributes.MOD_LOADER, loader)
+                    attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
+                    attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                    attribute(REMAPPED_ATTRIBUTE, false)
+                }
+
+                outgoing.artifact(neoforgeMergedJar)
+            }
+
+        val mergedDevRuntimeElements =
+            configurations.register(lowerCamelCaseGradleName(featureName, "mergedDevRuntimeElements")) {
+                isCanBeResolved = false
+                isCanBeConsumed = true
+
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                    attribute(TargetAttributes.MOD_LOADER, loader)
+                    attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
+                    attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                    attribute(REMAPPED_ATTRIBUTE, true)
+                    attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
+                }
+
+                outgoing.artifact(neoforgeMergedDevJar)
+            }
+
         dependencies {
-            embed(target(neoforgeGame261))
-            embed(target(neoforgeGame211))
+            include(project(":", mergedRuntimeElements.name))
+            includeDev(project(":", mergedDevRuntimeElements.name))
+        }
+
+        jar {
+            manifest {
+                attributes(
+                    "FMLModType" to "GAMELIBRARY"
+                )
+            }
         }
     }
 
@@ -892,7 +995,7 @@ cloche {
         runs { client() }
 
         dependencies {
-            modRuntimeOnly(project(":")) {
+            modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
 
@@ -911,7 +1014,7 @@ cloche {
         runs { client() }
 
         dependencies {
-            modRuntimeOnly(project(":")) {
+            modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
 
@@ -931,7 +1034,7 @@ cloche {
         runs { client() }
 
         dependencies {
-            modRuntimeOnly(project(":")) {
+            modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
 
@@ -963,7 +1066,9 @@ cloche {
                 isTransitive = false
             }
 
-            runtimeOnly(catalog.preloadingTricks)
+            legacyClasspath(catalog.preloadingTricks) {
+                isTransitive = false
+            }
 
             modRuntimeOnly(catalog.klf.mc20.forge)
 
@@ -992,7 +1097,9 @@ cloche {
                 isTransitive = false
             }
 
-            runtimeOnly(catalog.preloadingTricks)
+            legacyClasspath(catalog.preloadingTricks) {
+                isTransitive = false
+            }
 
             modRuntimeOnly(catalog.klf.mc21.neoforge)
 
@@ -1018,7 +1125,9 @@ cloche {
                 isTransitive = false
             }
 
-            runtimeOnly(catalog.preloadingTricks)
+            legacyClasspath(catalog.preloadingTricks) {
+                isTransitive = false
+            }
 
             modRuntimeOnly(catalog.klf.mc26.neoforge)
 
@@ -1048,7 +1157,7 @@ cloche {
             enabled = false
         }
 
-        val ForgeMetadataTransformer = object : ResourceTransformer {
+        class ForgeMetadataTransformer : ResourceTransformer {
             private val gson = GsonBuilder().setPrettyPrinting().create()
             private val collected = JsonArray()
             private val path = "META-INF/jarjar/metadata.json"
@@ -1086,36 +1195,36 @@ cloche {
             archiveClassifier = "dev"
             configurations = emptyList()
 
-            from(project.zipTree(fabricContainer.includeDevJarTask.flatMap { it.archiveFile }))
-            from(
-                project.zipTree(
-                    project.tasks.named(forgeGame.jarTaskName, Jar::class.java).flatMap { it.archiveFile })
-            )
-            from(project.zipTree(neoforgeContainer.includeDevJarTask.flatMap { it.archiveFile }))
+            for (container in listOf(fabricContainer, forgeContainer, neoforgeContainer)) {
+                val output = container.includeDevJarTask.flatMap { it.archiveFile }
+                from(project.zipTree(output))
+
+                manifest.fromJars(serviceOf(), output)
+            }
 
             mergeServiceFiles()
             append("META-INF/accesstransformer.cfg")
 
-            transform(ForgeMetadataTransformer)
-            transform(PreserveFirstFoundResourceTransformer::class.java)
+            transform<ForgeMetadataTransformer>()
+            transform<PreserveFirstFoundResourceTransformer>()
         }
 
         val shadowMergedJar by registering(ShadowJar::class) {
             archiveClassifier = ""
             configurations = emptyList()
 
-            from(project.zipTree(fabricContainer.includeJarTask.flatMap { it.archiveFile }))
-            from(
-                project.zipTree(
-                    project.tasks.named(forgeGame.includeJarTaskName, Jar::class.java).flatMap { it.archiveFile })
-            )
-            from(project.zipTree(neoforgeContainer.includeJarTask.flatMap { it.archiveFile }))
+            for (container in listOf(fabricContainer, forgeContainer, neoforgeContainer)) {
+                val output = container.includeJarTask.flatMap { it.archiveFile }
+                from(project.zipTree(output))
+
+                manifest.fromJars(serviceOf(), output)
+            }
 
             mergeServiceFiles()
             append("META-INF/accesstransformer.cfg")
-
-            transform(ForgeMetadataTransformer)
-            transform(PreserveFirstFoundResourceTransformer::class.java)
+            
+            transform<ForgeMetadataTransformer>()
+            transform<PreserveFirstFoundResourceTransformer>()
         }
 
         val shadowSourcesJar by registering(ShadowJar::class) {
