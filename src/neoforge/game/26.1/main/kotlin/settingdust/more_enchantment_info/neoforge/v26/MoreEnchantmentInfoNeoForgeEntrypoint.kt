@@ -6,7 +6,7 @@ import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.neoforge.util.NeoForgeAdapter
 import settingdust.more_enchantment_info.util.Entrypoint
 import settingdust.more_enchantment_info.util.MinecraftVersion
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v26.util.toNativeIdentifier
 
 class MoreEnchantmentInfoNeoForgeEntrypoint : Entrypoint {
     init {

@@ -9,7 +9,7 @@ import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.resources.PreparableReloadListener
 import net.minecraft.server.packs.resources.ResourceManager
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v26.util.toNativeIdentifier
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 

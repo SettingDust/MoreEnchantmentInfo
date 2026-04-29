@@ -6,27 +6,27 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.runtime.IJeiRuntime
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
-import settingdust.more_enchantment_info.util.toNativeIdentifier
-import settingdust.more_enchantment_info.v26.jei.EnchantmentJeiFactory
+import settingdust.more_enchantment_info.v26.jei.JEIMoreEnchantmentInfo
+import settingdust.more_enchantment_info.v26.util.toNativeIdentifier
 
 class NeoForgeJEIMoreEnchantmentInfo : IModPlugin {
-    private val factory = EnchantmentJeiFactory()
+    private val delegate = JEIMoreEnchantmentInfo()
 
     override fun getPluginUid() = MoreEnchantmentInfo.id("enchantment").toNativeIdentifier()
 
     override fun onRuntimeAvailable(jeiRuntime: IJeiRuntime) {
-        factory.onRuntimeAvailable(jeiRuntime, jeiRuntime.jeiHelpers)
+        delegate.onRuntimeAvailable(jeiRuntime)
     }
 
     override fun registerCategories(registration: IRecipeCategoryRegistration) {
-        factory.registerCategories(registration)
+        delegate.registerCategories(registration)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        factory.registerRecipes(registration)
+        delegate.registerRecipes(registration)
     }
 
     override fun registerIngredients(registration: IModIngredientRegistration) {
-        factory.registerIngredients(registration)
+        delegate.registerIngredients(registration)
     }
 }
