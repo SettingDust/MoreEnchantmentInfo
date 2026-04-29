@@ -12,7 +12,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
 import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getHolderOrNull
 import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getIdentifier
-import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.registryOrThrow
+import settingdust.more_enchantment_info.util.RegistryAdapter.Companion.getRegistry
 import kotlin.jvm.optionals.getOrNull
 
 interface EnchantmentAdapter {
@@ -20,7 +20,7 @@ interface EnchantmentAdapter {
         val DESCRIPTION_KEYS: Array<String> = arrayOf("desc", "description", "info")
 
         val registry: Registry<Enchantment>?
-            get() = Minecraft.getInstance().level?.registryAccess()?.registryOrThrow(Registries.ENCHANTMENT)
+            get() = Minecraft.getInstance().level?.registryAccess()?.getRegistry(Registries.ENCHANTMENT)
 
         val Enchantment.key: Identifier?
             get() = registry?.getIdentifier(this)

@@ -13,7 +13,7 @@ class RegistryAdapter : RegistryAdapter {
         MinecraftVersion.V261.requireCurrent()
     }
 
-    override fun <T : Any> RegistryAccess.registryOrThrow(registryKey: ResourceKey<Registry<T>>): Registry<T> =
+    override fun <T : Any> RegistryAccess.getRegistry(registryKey: ResourceKey<Registry<T>>): Registry<T> =
         lookupOrThrow(registryKey)
 
     override fun <T : Any> Registry<T>.getIdentifier(value: T): Identifier? = getKey(value)?.toCommonIdentifier()

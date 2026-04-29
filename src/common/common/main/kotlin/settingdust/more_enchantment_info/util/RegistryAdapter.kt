@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceKey
 interface RegistryAdapter {
     companion object : RegistryAdapter by ServiceLoaderUtil.findService<RegistryAdapter>()
 
-    fun <T : Any> RegistryAccess.registryOrThrow(registryKey: ResourceKey<Registry<T>>): Registry<T>
+    fun <T : Any> RegistryAccess.getRegistry(registryKey: ResourceKey<Registry<T>>): Registry<T>
 
     fun <T : Any> Registry<T>.getIdentifier(value: T): Identifier?
 
