@@ -3,6 +3,7 @@ package settingdust.more_enchantment_info.v20.jei
 import mezz.jei.api.ingredients.IIngredientHelper
 import mezz.jei.api.ingredients.IIngredientRenderer
 import mezz.jei.api.ingredients.IIngredientType
+import mezz.jei.api.ingredients.IIngredientTypeWithSubtypes
 import mezz.jei.api.ingredients.subtypes.UidContext
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -22,7 +23,13 @@ import java.util.stream.Stream
 
 object EnchantmentIngredientHelper : IIngredientHelper<Holder<Enchantment>> {
     @Suppress("UNCHECKED_CAST")
-    val ENCHANTMENT_INGREDIENT = IIngredientType { Holder::class.java } as IIngredientType<Holder<Enchantment>>
+    val ENCHANTMENT_INGREDIENT = object : IIngredientTypeWithSubtypes<Enchantment, Holder<Enchantment>> {
+        override fun getIngredientClass() = Holder::class.java as Class<Holder<Enchantment>>
+
+        override fun getIngredientBaseClass() = Enchantment::class.java
+
+        override fun getBase(holder: Holder<Enchantment>) = holder.value()
+    }
 
     override fun getIngredientType() = ENCHANTMENT_INGREDIENT
 
