@@ -5,7 +5,7 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.resources.PreparableReloadListener
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.util.Entrypoint
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v26.util.toNativeIdentifier
 import settingdust.more_enchantment_info.v26.MoreEnchantmentInfoAtlasManager
 import java.util.concurrent.Executor
 

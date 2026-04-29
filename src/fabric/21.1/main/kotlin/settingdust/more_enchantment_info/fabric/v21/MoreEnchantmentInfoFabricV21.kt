@@ -10,7 +10,7 @@ import net.minecraft.util.profiling.ProfilerFiller
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.v21.MoreEnchantmentInfoSpriteUploader
 import settingdust.more_enchantment_info.util.Entrypoint
-import settingdust.more_enchantment_info.util.toNativeIdentifier
+import settingdust.more_enchantment_info.v21.util.toNativeIdentifier
 import java.util.concurrent.Executor
 
 class MoreEnchantmentInfoFabricV21 : Entrypoint {
