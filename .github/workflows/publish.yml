@@ -19,21 +19,22 @@ jobs:
       - name: Execute Gradle build
         run: gradle build
 
-      - name: Get CHANGELOG
-        id: changelog
-        uses: mikepenz/release-changelog-builder-action@v6
-        with:
-          outputFile: CHANGELOG.MD
-
       - name: Git Status
         run: |
           git status --porcelain
           ./gradlew printVersion
 
+      - name: Update CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+
       - name: Upload bundled jar
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
-          changelog: ${{ steps.changelog.outputs.changelog }}
+          changelog: ${{ steps.changelog.outputs.changes }}
           # Only include this section if you wish to publish
           # your assets on Modrinth.
           modrinth-id: more-enchantment-info
