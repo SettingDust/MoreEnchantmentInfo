@@ -22,6 +22,8 @@ jobs:
       - name: Get CHANGELOG
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v6
+        with:
+          outputFile: CHANGELOG.MD
 
       - name: Git Status
         run: |
@@ -31,7 +33,7 @@ jobs:
       - name: Upload bundled jar
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
-          changelog: ${{ steps.changelog.outputs.changes }}
+          changelog: ${{ steps.changelog.outputs.changelog }}
           # Only include this section if you wish to publish
           # your assets on Modrinth.
           modrinth-id: more-enchantment-info
@@ -61,18 +63,13 @@ jobs:
 
           dependencies: |
             fabric-language-kotlin
-            kotlin-lang-forge
+            kotlin-lang-forge{curseforge:1244682}
             preloading-tricks
 
           java: |
             17
             21
             25
-
-      - name: Update CHANGELOG
-        uses: mikepenz/release-changelog-builder-action@v6
-        with:
-          outputFile: CHANGELOG.MD
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v7
