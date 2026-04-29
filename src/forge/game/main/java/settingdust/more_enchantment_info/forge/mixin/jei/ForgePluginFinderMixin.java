@@ -1,7 +1,7 @@
-package settingdust.more_enchantment_info.neoforge.mixin.jei;
+package settingdust.more_enchantment_info.forge.mixin.jei;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import mezz.jei.neoforge.startup.ForgePluginFinder;
+import mezz.jei.forge.startup.ForgePluginFinder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,9 +21,8 @@ public class ForgePluginFinderMixin {
             Class<?> instanceClass,
             CallbackInfoReturnable<List<?>> cir,
             @Local(name = "pluginClassNames") Set<String> pluginClassNames) {
-        switch (MinecraftVersion.Companion.getCurrent()) {
-            case V261 -> pluginClassNames.add("settingdust.more_enchantment_info.v26.jei.JEIMoreEnchantmentInfo");
-            case V1211 -> pluginClassNames.add("settingdust.more_enchantment_info.v21.jei.JEIMoreEnchantmentInfo");
+        if (MinecraftVersion.Companion.getCurrent() == MinecraftVersion.V1201) {
+            pluginClassNames.add("settingdust.more_enchantment_info.v20.jei.JEIMoreEnchantmentInfo");
         }
     }
 }

@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "settingdust.more_enchantment_info.forge.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "jei.ForgePluginFinderMixin"
   ],
