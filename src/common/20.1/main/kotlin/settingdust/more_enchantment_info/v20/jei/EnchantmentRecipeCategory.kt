@@ -1,5 +1,7 @@
 package settingdust.more_enchantment_info.v20.jei
 
+import kotlin.jvm.optionals.getOrNull
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.builder.ITooltipBuilder
 import mezz.jei.api.gui.drawable.IDrawable
@@ -24,16 +26,16 @@ import org.joml.Vector4i
 import org.joml.Vector4ic
 import settingdust.more_enchantment_info.MoreEnchantmentInfo
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites
-import settingdust.more_enchantment_info.v20.jei.DrawableSpriteDrawable
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.EnchantmentInstance
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.description
+import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isCompatibleWith
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isInTable
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isLootable
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.isTreasure
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.name
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.raritySprite
 import settingdust.more_enchantment_info.util.EnchantmentAdapter.Companion.supportedCategories
-import kotlin.jvm.optionals.getOrNull
+import settingdust.more_enchantment_info.v20.jei.DrawableSpriteDrawable
 
 class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<Holder<Enchantment>> {
     companion object {
@@ -89,7 +91,7 @@ class EnchantmentRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCate
 
         val conflicts = Minecraft.getInstance().level!!.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
             .holders()
-            .filter { it.value() != enchantment && !it.value().isCompatibleWith(enchantment) }
+            .filter { it != recipe && !it.isCompatibleWith(recipe) }
             .toList() as List<Holder<Enchantment>>
         if (conflicts.isNotEmpty()) {
             builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 41)

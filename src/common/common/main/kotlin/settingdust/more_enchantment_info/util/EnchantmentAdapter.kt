@@ -62,7 +62,7 @@ interface EnchantmentAdapter {
     val Enchantment.descriptionPrefix: String
     val Enchantment.name: Component
 
-    fun Enchantment.isCompatibleWith(other: Enchantment): Boolean
+    fun Holder<Enchantment>.isCompatibleWith(other: Holder<Enchantment>): Boolean
     val Enchantment.isLootable: Boolean
     val Enchantment.isTreasure: Boolean
     val Enchantment.isInTable: Boolean

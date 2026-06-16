@@ -5,7 +5,6 @@ import net.minecraft.core.HolderSet
 import net.minecraft.network.chat.Component
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.ItemTags
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.enchantment.Enchantment
 import settingdust.more_enchantment_info.MoreEnchantmentInfoSprites.CATEGORY_ARMOR
@@ -63,7 +62,7 @@ class EnchantmentAdapter : EnchantmentAdapter {
     override val Enchantment.name: Component
         get() = description()
 
-    override fun Enchantment.isCompatibleWith(other: Enchantment) = Enchantment.areCompatible(holder!!, other.holder!!)
+    override fun Holder<Enchantment>.isCompatibleWith(other: Holder<Enchantment>) = Enchantment.areCompatible(this, other)
 
     override val Enchantment.isLootable: Boolean
         get() = holder!!.`is`(EnchantmentTags.ON_RANDOM_LOOT)

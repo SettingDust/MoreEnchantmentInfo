@@ -54,7 +54,7 @@ class EnchantmentAdapter : EnchantmentAdapter {
     override val Enchantment.name: Component
         get() = Component.translatable(descriptionId)
 
-    override fun Enchantment.isCompatibleWith(other: Enchantment) = isCompatibleWith(other)
+    override fun Holder<Enchantment>.isCompatibleWith(other: Holder<Enchantment>) = value().isCompatibleWith(other.value())
 
     override val Enchantment.isLootable: Boolean
         get() = isDiscoverable
