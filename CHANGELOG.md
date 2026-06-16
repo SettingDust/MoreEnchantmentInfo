@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-06-16
+### :bug: Bug Fixes
+- [`99d93ef`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/99d93ef6c114eca454c2677eb1832bd711ac2b92) - **jei**: keep enchantment compatibility on holders *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.4.0] - 2026-04-29
 ### :sparkles: New Features
 - [`45bdc1e`](https://github.com/SettingDust/MoreEnchantmentInfo/commit/45bdc1e26e6bdec59ef642ff282deee0eae31c92) - add getIdentifier override in v26 EnchantmentRecipeCategory *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -78,3 +83,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.2.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.1.1...0.2.0
 [0.3.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.2.0...0.3.0
 [0.4.0]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.3.0...0.4.0
+[0.4.2]: https://github.com/SettingDust/MoreEnchantmentInfo/compare/0.4.1...0.4.2
