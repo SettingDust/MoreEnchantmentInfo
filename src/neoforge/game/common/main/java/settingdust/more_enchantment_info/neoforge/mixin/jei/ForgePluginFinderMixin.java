@@ -22,7 +22,7 @@ public class ForgePluginFinderMixin {
             CallbackInfoReturnable<List<?>> cir,
             @Local(name = "pluginClassNames") Set<String> pluginClassNames) {
         switch (MinecraftVersion.Companion.getCurrent()) {
-            case V261 -> pluginClassNames.add("settingdust.more_enchantment_info.v26.jei.JEIMoreEnchantmentInfo");
+            case V261,V262 -> pluginClassNames.add("settingdust.more_enchantment_info.v26.jei.JEIMoreEnchantmentInfo");
             case V1211 -> pluginClassNames.add("settingdust.more_enchantment_info.v21.jei.JEIMoreEnchantmentInfo");
         }
     }

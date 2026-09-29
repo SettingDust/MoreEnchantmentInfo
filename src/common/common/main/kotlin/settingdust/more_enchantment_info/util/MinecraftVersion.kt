@@ -5,7 +5,8 @@ enum class MinecraftVersion(
 ) {
     V1201("1.20.1"),
     V1211("1.21"),
-    V261("26.1");
+    V261("26.1"),
+    V262("26.2");
 
     fun matches(versionName: String): Boolean = versionName.startsWith(versionPrefix)
 

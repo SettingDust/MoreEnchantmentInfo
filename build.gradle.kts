@@ -45,6 +45,7 @@ plugins {
     id("com.palantir.git-version") version "5.0.0"
     id("com.gradleup.shadow") version "9.4.1"
     id("earth.terrarium.cloche") version "0.18.11-dust.8"
+    kotlin("kapt") version "2.3.20"
 }
 
 // region Project Properties
@@ -524,6 +525,10 @@ cloche {
         dependsOn(commonMain)
         // mixins.from("src/common/26.1/main/resources/$id.26_1.mixins.json")
     }
+    val common262 = common("common:26.2") {
+        dependsOn(commonMain)
+        // mixins.from("src/common/26.1/main/resources/$id.26_1.mixins.json")
+    }
 
     // endregion
 
@@ -674,6 +679,30 @@ cloche {
                 type = CommonMetadata.Dependency.Type.Required
                 version {
                     start = "26.1"
+                }
+            }
+        }
+
+        dependencies {
+            modImplementation(catalog.jei.mc2612.fabric)
+        }
+    }
+    val fabric262 = fabric("fabric:26.2") {
+        dependsOn(common262, fabricCommon)
+
+        minecraftVersion = "26.2"
+
+        metadata {
+            entrypoint("jei_mod_plugin") {
+                adapter = "kotlin"
+                value = "$group.v26.jei.JEIMoreEnchantmentInfo"
+            }
+
+            dependency {
+                modId = "minecraft"
+                type = CommonMetadata.Dependency.Type.Required
+                version {
+                    start = "26.2"
                 }
             }
         }
@@ -838,6 +867,51 @@ cloche {
             }
         }
     }
+    val neoforgeGame262 = neoforge("neoforge:game:26.2") {
+        dependsOn(common262, neoforgeGameCommon)
+
+        minecraftVersion = "26.2"
+
+        metadata {
+            modLoader = "klf"
+            loaderVersion {
+                start = "1"
+            }
+
+            dependency {
+                modId = "minecraft"
+                type = CommonMetadata.Dependency.Type.Required
+                version {
+                    start = "26.2"
+                }
+            }
+
+            dependency {
+                modId = "preloading_tricks"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+        }
+
+        dependencies {
+            modImplementation(catalog.klf.mc26.neoforge)
+
+            modImplementation(catalog.jei.mc2612.neoforge)
+        }
+
+        tasks {
+            named<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
+                manifest {
+                    attributes(
+                        "ForgeVariant" to "NeoForge"
+                    )
+                }
+            }
+
+            named(generateModsManifestTaskName) {
+                enabled = false
+            }
+        }
+    }
 
     // endregion
 
@@ -863,6 +937,7 @@ cloche {
             includeTarget(fabric261)
             includeTarget(fabric211)
             includeTarget(fabric201)
+            includeTarget(fabric262)
         }
 
         jar {
@@ -900,7 +975,7 @@ cloche {
             destinationDirectory = intermediateOutputsDirectory
             configurations = emptyList()
 
-            for (target in listOf(neoforgeGame261,neoforgeGame211)) {
+            for (target in listOf(neoforgeGame211, neoforgeGame261, neoforgeGame262)) {
                 val output = tasks.named<Jar>(target.includeJarTaskName).flatMap { it.archiveFile }
                 from(project.zipTree(output))
 
@@ -918,7 +993,7 @@ cloche {
             destinationDirectory = intermediateOutputsDirectory
             configurations = emptyList()
 
-            for (target in listOf(neoforgeGame261,neoforgeGame211)) {
+            for (target in listOf(neoforgeGame211, neoforgeGame261, neoforgeGame262)) {
                 val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
                 from(project.zipTree(output))
 
@@ -1222,7 +1297,7 @@ cloche {
 
             mergeServiceFiles()
             append("META-INF/accesstransformer.cfg")
-            
+
             transform<ForgeMetadataTransformer>()
             transform<PreserveFirstFoundResourceTransformer>()
         }
@@ -1310,6 +1385,7 @@ fun String.fabricApiVersion(): String? = when (this) {
     "1.20.1" -> "0.92.7"
     "1.21.1" -> "0.116.10"
     "26.1.2" -> "0.145.4"
+    "26.2" -> "0.152.1"
     else -> null
 }
 
@@ -1327,6 +1403,7 @@ fun String.forgeLoaderVersion(): String? = when (this) {
 fun String.neoForgeLoaderVersion(): String? = when (this) {
     "1.21.1" -> "21.1.228"
     "26.1.2" -> "26.1.2.30-beta"
+    "26.2" -> "26.2.0.57"
     else -> null
 }
 
