@@ -1,0 +1,10 @@
+package settingdust.more_enchantment_info.v26.util
+
+import settingdust.more_enchantment_info.util.MinecraftAdapter
+import settingdust.more_enchantment_info.util.MinecraftVersion
+
+class MinecraftAdapter : MinecraftAdapter {
+	init {
+		MinecraftVersion.V262.requireCurrent()
+	}
+}

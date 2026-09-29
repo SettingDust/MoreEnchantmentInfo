@@ -1,7 +1,7 @@
 package settingdust.more_enchantment_info.util
 
 import net.minecraft.client.Minecraft
-import net.minecraft.client.resources.language.I18n
+import net.minecraft.locale.Language
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.Registries
@@ -47,11 +47,11 @@ interface EnchantmentAdapter {
         fun Enchantment.findDescriptionKey(level: Int): String? {
             for (descriptionKey in DESCRIPTION_KEYS) {
                 var key = "${descriptionPrefix}.${descriptionKey}"
-                if (I18n.exists(key)) {
+                if (Language.getInstance().has(key)) {
                     return key
                 }
                 key = "$key.$level"
-                if (I18n.exists(key)) {
+                if (Language.getInstance().has(key)) {
                     return key
                 }
             }
